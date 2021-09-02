@@ -1,0 +1,126 @@
+#phone-hand {
+  animation: phone 2s ease-in-out infinite alternate;
+  transform-origin: left;
+  transform-box: fill-box;
+}
+
+@keyframes phone {
+  from {
+    transform: rotateZ(0deg);
+  }
+  to {
+    transform: rotateZ(15deg);
+  }
+}
+
+#hair {
+  animation: hair 2s ease-in-out infinite alternate;
+  transform-origin: right;
+  transform-box: fill-box;
+}
+
+@keyframes hair {
+  from {
+    transform: rotateZ(0deg);
+  }
+  to {
+    transform: rotateZ(-20deg);
+  }
+}
+
+#left {
+  animation: left_ 5s ease-in-out 1000ms infinite alternate;
+}
+
+@keyframes left_ {
+  0% {
+    fill: #3f3d56;
+  }
+  16% {
+    fill: #00ac17;
+  }
+  100% {
+    fill: #00ac17;
+  }
+}
+
+#middle {
+  animation: middle_ 5s ease-in-out 1200ms infinite alternate;
+}
+
+@keyframes middle_ {
+  0% {
+    fill: #3f3d56;
+  }
+  16% {
+    fill: #00ac17;
+  }
+  100% {
+    fill: #00ac17;
+  }
+}
+
+#right {
+  animation-delay: 2s;
+  animation: right_ 5s ease-in-out 1400ms infinite alternate;
+}
+
+@keyframes right_ {
+  0% {
+    fill: #3f3d56;
+  }
+  16% {
+    fill: #00ac17;
+  }
+  100% {
+    fill: #00ac17;
+  }
+}
+
+#clothes-purple {
+  animation: clothes-purple 7s infinite alternate;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+@keyframes clothes-purple {
+  0% {
+    transform: scale(1);
+  }
+
+  10% {
+    transform: scale(1.1);
+  }
+
+  20% {
+    transform: scale(0.95);
+  }
+
+  30% {
+    transform: scale(1);
+  }
+}
+
+#clothes-white {
+  animation: clothes-white 7s 250ms infinite alternate;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+@keyframes clothes-white {
+  0% {
+    transform: scale(1);
+  }
+
+  10% {
+    transform: scale(1.1);
+  }
+
+  20% {
+    transform: scale(0.95);
+  }
+
+  30% {
+    transform: scale(1);
+  }
+}
