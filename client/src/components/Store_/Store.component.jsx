@@ -53,7 +53,7 @@ function Store() {
     );
   }
   return (
-    <>
+    <React.Fragment>
       <Container>
         <Row className='text-center my-5'>
           <p className='display-5'>
@@ -63,7 +63,7 @@ function Store() {
         <Row className='g-4 my-auto'>{getProducts()}</Row>
       </Container>
       <Footer />
-    </>
+    </React.Fragment>
   );
 }
 

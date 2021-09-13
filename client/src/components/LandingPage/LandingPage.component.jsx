@@ -6,7 +6,7 @@ import Footer from "../Footer/Footer.component";
 
 function LandingPage() {
   return (
-    <>
+    <React.Fragment>
       <div className='container-xl align-items-center justify-content-center'>
         <div className='row'>
           <div className='col-md-5 col-lg-8 col-12'>
@@ -266,7 +266,7 @@ function LandingPage() {
         </div>
       </div>
       <Footer />
-    </>
+    </React.Fragment>
   );
 }
 

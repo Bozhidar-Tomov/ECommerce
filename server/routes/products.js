@@ -39,6 +39,7 @@ router.route("/add").post((req, res) => {
       Warranty: "24 Months",
     },
     price: 1349.99,
+    category: "laptop",
   });
 
   newProduct

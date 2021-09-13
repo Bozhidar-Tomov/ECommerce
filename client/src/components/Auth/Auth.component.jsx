@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 
 import "./styles.css";
@@ -30,6 +30,8 @@ import countries from "countries-list";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { signup, signin } from "../../actions/auth";
+
+import ReCAPTCHA from "react-google-recaptcha";
 
 const { REACT_APP_GOOGLE_ID } = process.env;
 
@@ -68,11 +70,13 @@ const schemaSignIn = yup.object().shape({
 function Auth() {
   const error = useSelector((state) => state.auth.errors);
   console.log("rendering");
-  const [isSignUp, setsSignUp] = useState(false);
+  const [isSignUp, setSignUp] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [location, setLocation] = useState("");
+  const [ip, setIp] = useState("");
   const dispatch = useDispatch();
   const history = useHistory();
+  const recaptchaRef = useRef();
 
   const googleSuccess = async (res) => {
     const result = res?.profileObj;
@@ -97,7 +101,9 @@ function Auth() {
           return response.json();
         })
         .then(function (data) {
+          console.log(data);
           setLocation(data.country_name);
+          setIp(data.ip);
         });
     }
     getLocation();
@@ -133,11 +139,14 @@ function Auth() {
         <Card.Body>
           <Formik
             validationSchema={isSignUp ? schemaSignUp : schemaSignIn}
-            onSubmit={(formData) => {
+            onSubmit={async (formData) => {
+              const token = await recaptchaRef.current.executeAsync();
+              recaptchaRef.current.reset();
+
               if (isSignUp) {
-                dispatch(signup(formData, history));
+                dispatch(signup({ ...formData, token, ip }, history));
               } else {
-                dispatch(signin(formData, history));
+                dispatch(signin({ ...formData, token, ip }, history));
               }
             }}
             initialValues={{
@@ -298,6 +307,12 @@ function Auth() {
                   </Row>
                   <Row>
                     <Col md={6} className='text-center mt-2'>
+                      <ReCAPTCHA
+                        sitekey={process.env.REACT_APP_SITE_KEY}
+                        size='invisible'
+                        badge='bottomright'
+                        ref={recaptchaRef}
+                      />
                       <Button className='w-100 my-1' type='submit'>
                         {isSignUp ? "Sign Up" : "Sign In"}
                       </Button>
@@ -324,7 +339,7 @@ function Auth() {
                         className='switch-btn w-100 my-4 text-muted text-end'
                         type='button'
                         onClick={() => {
-                          setsSignUp((e) => !e);
+                          setSignUp((e) => !e);
                           dispatch({ type: ERROR, payload: null });
                           handleReset();
                         }}>

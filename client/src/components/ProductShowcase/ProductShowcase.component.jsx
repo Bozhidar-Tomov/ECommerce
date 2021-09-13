@@ -21,6 +21,7 @@ import Image from "react-bootstrap/Image";
 import Footer from "../Footer/Footer.component";
 
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function getAdditionalInfo(info) {
   if (info) {
@@ -117,7 +118,12 @@ function ProductShowcase(props) {
                   </span>
                 </Col>
                 <Col className='col text-end'>
-                  <Button variant='primary' size='lg' className='w-100'>
+                  <Button
+                    as={Link}
+                    to={"../checkout/" + props.match.params.id}
+                    variant='primary'
+                    size='lg'
+                    className='w-100'>
                     Buy online now
                     <svg
                       xmlns='http://www.w3.org/2000/svg'

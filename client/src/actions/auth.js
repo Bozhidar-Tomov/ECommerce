@@ -7,6 +7,7 @@ export const signin = (formData, history) => async (dispatch) => {
     dispatch({ type: AUTH, payload: data });
     history.push("/store");
   } catch (error) {
+    console.log(error);
     dispatch({
       type: ERROR,
       payload: error?.response?.data.message || "Internal Server Error. Please try again later",

@@ -1,13 +1,33 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
+const axios = require("axios");
 
 require("dotenv").config();
 
 const SECRET_KEY = process.env.SECRET_KEY;
+const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
+
+async function validateHuman(token, ip) {
+  return await axios
+    .post(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${token}&remoteip=${ip}`
+    )
+    .then((res) => {
+      return res.data.success;
+    })
+    .catch((err) => {
+      console.log(err);
+      return null;
+    });
+}
 
 const signin = async (req, res) => {
-  const { email, password, rememberMe } = req.body;
+  const { email, password, rememberMe, token, ip } = req.body;
+
+  if (!(await validateHuman(token, ip))) {
+    return res.status(400).json({ message: "Failed reCAPTCHA" });
+  }
 
   try {
     const existingUser = await User.findOne({ email });
@@ -28,7 +48,12 @@ const signin = async (req, res) => {
 };
 
 const signup = async (req, res) => {
-  const { firstName, lastName, email, country, password, confirmPassword, rememberMe } = req.body;
+  const { firstName, lastName, email, country, password, confirmPassword, rememberMe, token, ip } =
+    req.body;
+
+  if (!(await validateHuman(token, ip))) {
+    return res.status(400).json({ message: "Failed reCAPTCHA" });
+  }
 
   try {
     const existingUser = await User.findOne({ email });

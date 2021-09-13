@@ -23,6 +23,7 @@ const productSchema = new Schema(
       Warranty: { type: String, required: true },
     },
     price: { type: Number, required: true },
+    category: { type: String, required: true, max: 50 },
   },
   {
     timestamps: true,

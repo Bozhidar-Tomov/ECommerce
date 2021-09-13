@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 import "./styles.css";
 
@@ -13,8 +13,25 @@ import Image from "react-bootstrap/Image";
 import VISA from "../../images/visa.svg";
 import MASTERCARD from "../../images/mastercard.svg";
 import PAYPAL from "../../images/paypal.svg";
+import Footer from "../Footer/Footer.component";
+import axios from "axios";
 
-function Checkout() {
+function Checkout(props) {
+  const [data, setData] = useState([null]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await axios.get("http://localhost:5000/products/" + props.match.params.id).then((res) => {
+          setData(res.data);
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, [props.match.params.id]);
+  console.log(data);
   return (
     <React.Fragment>
       <Container className='mt-4'>
@@ -81,12 +98,12 @@ function Checkout() {
                 <li class='list-group-item'>
                   <Row>
                     <Col xl={9}>
-                      <span class='fw-bold'>Lenovo Ideapad 3 15TL</span>
+                      <span class='fw-bold'>{data.name}</span>
                       <br />
-                      <span class='text-muted'>laptop</span>
+                      <span class='text-muted'>{data.category}</span>
                     </Col>
                     <Col xl={3} class='text-end'>
-                      1 099.99 BGN
+                      {data.price} BGN
                     </Col>
                   </Row>
                 </li>
@@ -109,7 +126,7 @@ function Checkout() {
                       Total (BGN)
                     </Col>
                     <Col xl={3} class='text-end'>
-                      1 099.99 BGN
+                      {data.price} BGN
                     </Col>
                   </Row>
                 </li>
@@ -165,6 +182,7 @@ function Checkout() {
           </Col>
         </Row>
       </Container>
+      <Footer />
     </React.Fragment>
   );
 }
