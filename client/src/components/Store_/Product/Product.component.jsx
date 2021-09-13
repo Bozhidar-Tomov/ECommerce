@@ -36,7 +36,7 @@ function Product(props) {
           <Card.Text className='fs-3 fw-bold'>
             {Math.trunc(props?.price)}.
             <sup>{Math.trunc((props?.price - Math.floor(props?.price)) * 100)}</sup>{" "}
-            <span class='fs-5'> BGN</span>
+            <span className='fs-5'> BGN</span>
           </Card.Text>
           <hr />
           <Link to={"/product/" + props._id} className='btn btn-primary'>

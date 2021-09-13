@@ -12,13 +12,13 @@ function LandingPage() {
           <div className='col-md-5 col-lg-8 col-12'>
             <svg viewBox='0 0 1037 819' fill='none' xmlns='http://www.w3.org/2000/svg'>
               <g id='online-shop'>
-                <g id='Vector' opacity='0.25' filter='url(#filter0_d)'>
+                <g id='Vector' opacity='0.45' filter='url(#filter0_d)'>
                   <path
                     d='M179.802 135.432C174.322 142.082 172.212 151.432 169.852 160.222C150.852 231.062 104.032 288.042 50.7121 328.742C28.1321 345.982 0.642065 369.102 5.58206 400.012C8.24206 416.612 19.9121 428.832 28.5821 442.352C46.7721 470.662 52.6721 509.142 44.0021 543.032C34.1421 581.592 6.58206 617.572 15.1121 656.562C20.3721 680.562 38.2321 697.642 55.4021 712.322C82.1887 735.209 109.829 756.649 138.322 776.642C157.422 790.042 177.742 803.082 200.002 804.782C219.602 806.282 238.802 798.832 257.412 791.482C273.672 785.052 290.342 778.362 303.472 765.482C312.042 757.072 318.872 746.222 328.392 739.342C350.752 723.182 379.472 733.422 405.112 740.342C465.612 756.582 530.362 750.652 587.932 723.602C676.242 682.102 743.552 594.952 829.932 548.192C867.072 528.082 907.472 515.602 941.862 489.702C961.237 474.956 977.887 456.938 991.062 436.462C1017.06 396.352 1031.12 345.212 1027.06 295.152C1023 245.092 1000.25 196.852 964.522 168.592C926.272 138.342 877.962 132.692 834.442 114.532C789.502 95.7722 749.522 63.5322 705.012 43.4022C668.996 27.1588 629.8 19.185 590.3 20.0658C550.8 20.9466 511.998 30.6596 476.742 48.4922C428.302 72.9922 379.202 130.152 325.252 134.492C286.812 137.492 209.822 99.0122 179.802 135.432Z'
                     fill='url(#paint0_linear)'
                   />
                 </g>
-                <g id='undraw_Online_shopping_re_k1sv 1' clip-path='url(#clip0)'>
+                <g id='undraw_Online_shopping_re_k1sv 1' clipPath='url(#clip0)'>
                   <path
                     id='Vector_2'
                     d='M424.075 656H43.0748C42.8096 656 42.5552 655.895 42.3677 655.707C42.1801 655.52 42.0748 655.265 42.0748 655C42.0748 654.735 42.1801 654.48 42.3677 654.293C42.5552 654.105 42.8096 654 43.0748 654H424.075C424.34 654 424.594 654.105 424.782 654.293C424.969 654.48 425.075 654.735 425.075 655C425.075 655.265 424.969 655.52 424.782 655.707C424.594 655.895 424.34 656 424.075 656Z'
@@ -208,8 +208,8 @@ function LandingPage() {
                   width='1036.75'
                   height='798.976'
                   filterUnits='userSpaceOnUse'
-                  color-interpolation-filters='sRGB'>
-                  <feFlood flood-opacity='0' result='BackgroundImageFix' />
+                  colorInterpolationFilters='sRGB'>
+                  <feFlood floodOpacity='0' result='BackgroundImageFix' />
                   <feColorMatrix
                     in='SourceAlpha'
                     type='matrix'
@@ -237,8 +237,8 @@ function LandingPage() {
                   x2='36.5'
                   y2='677.5'
                   gradientUnits='userSpaceOnUse'>
-                  <stop stop-color='#551AFF' />
-                  <stop offset='1' stop-color='#45BCFF' stop-opacity='0.94' />
+                  <stop stopColor='#8860ff' />
+                  <stop offset='1' stopColor='#64c6ff' stopOpacity='0.94' />
                 </linearGradient>
                 <clipPath id='clip0'>
                   <rect width='847.693' height='656' fill='white' transform='translate(18)' />
@@ -257,7 +257,7 @@ function LandingPage() {
               <div className='row g-2 mx-auto my-auto'>
                 <div className='col'>
                   <a className='btn btn btn-primary w-75' href='/auth'>
-                    Log in
+                    Sign In
                   </a>
                 </div>
               </div>

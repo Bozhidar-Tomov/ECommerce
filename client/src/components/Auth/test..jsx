@@ -179,7 +179,7 @@ return (
           <Row>
             <Col md={6} className='text-center mt-1'>
               <Button className='w-100 my-4' type='submit'>
-                {isSignUp ? "Sign Up" : "Log in"}
+                {isSignUp ? "Sign Up" : "Sign In"}
               </Button>
             </Col>
 
@@ -188,7 +188,7 @@ return (
                 type='button'
                 className='switch-btn w-100 my-4 text-muted text-end'
                 onClick={() => setsSignUp((e) => !e)}>
-                {isSignUp ? "ALREADY HAVE AN ACCOUNT? LOG IN" : "DON'T HAVE AN ACCOUNT? SIGN UP"}
+                {isSignUp ? "ALREADY HAVE AN ACCOUNT? Sign In" : "DON'T HAVE AN ACCOUNT? SIGN UP"}
               </button>
             </Col>
           </Row>

@@ -8,6 +8,7 @@ import Row from "react-bootstrap/Row";
 import Product from "./Product/Product.component";
 import Footer from "../Footer/Footer.component";
 import axios from "axios";
+import Alert from "react-bootstrap/Alert";
 
 function Store() {
   const [product, setProduct] = useState([null]);
@@ -43,8 +44,11 @@ function Store() {
   }
   if (product.length === 0) {
     return (
-      <Container>
-        <p className='display-3'>Loading...</p>
+      <Container className='no-products'>
+        <Alert variant='secondary' className='text-center'>
+          {" "}
+          No products available for this category{" "}
+        </Alert>
       </Container>
     );
   }

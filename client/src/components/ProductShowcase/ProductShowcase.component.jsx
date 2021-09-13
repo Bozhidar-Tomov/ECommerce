@@ -31,12 +31,12 @@ function getAdditionalInfo(info) {
             <Row className='p-2'>
               <Col>
                 <Card.Text>
-                  <span class='fs-5 fw-bold text-secondary'>{key_}:</span>
+                  <span className='fs-5 fw-bold text-secondary'>{key_}:</span>
                 </Card.Text>
               </Col>
               <Col className='text-end'>
                 <Card.Text>
-                  <span class='lead'>{value_}</span>
+                  <span className='lead'>{value_}</span>
                 </Card.Text>
               </Col>
             </Row>
@@ -62,6 +62,7 @@ function ProductShowcase(props) {
     };
     fetchData();
   }, [props.match.params.id]);
+  console.log(data);
 
   return (
     <section>
@@ -79,11 +80,11 @@ function ProductShowcase(props) {
               </Row>
               <Row>
                 <Col>
-                  <span>Code: {data.code}</span>
+                  <span>Code: {data.code ? data.code : "No data"}</span>
                 </Col>
                 <Col className='text-end'>
                   <span>Availability: </span>
-                  <span class='text-success'>In Stock</span>
+                  <span className='text-success'>In Stock</span>
                 </Col>
               </Row>
               <Row className=' mt-2 text-end'>
@@ -93,7 +94,7 @@ function ProductShowcase(props) {
                     width='36'
                     height='36'
                     fill='currentColor'
-                    class='bi bi-truck text-success me-2'
+                    className='bi bi-truck text-success me-2'
                     viewBox='0 0 16 16'>
                     <path d='M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z' />
                   </svg>
@@ -101,21 +102,21 @@ function ProductShowcase(props) {
                 </p>
               </Row>
               <Row className='mt-2'>
-                <p class='fs-4 text-primary'>Description</p>
-                <p class='fs-5 lead'>{data.description}</p>
+                <p className='fs-4 text-primary'>Description</p>
+                <p className='fs-5 lead'>{data.description ? data.description : "No data"}</p>
               </Row>
               <Row>
                 <Col>
-                  <span class='fs-3'>Price: </span>
-                  <span class='fs-2 text-primary'>
+                  <span className='fs-3'>Price: </span>
+                  <span className='fs-2 text-primary'>
                     {Math.trunc(data.price)}.
-                    <sup class='fw-light fs-5'>
+                    <sup className='fw-light fs-5'>
                       {Math.trunc((data.price - Math.floor(data.price)) * 100)}
                     </sup>
-                    <span class='fs-4'> BGN</span>
+                    <span className='fs-4'> BGN</span>
                   </span>
                 </Col>
-                <Col class='col text-end'>
+                <Col className='col text-end'>
                   <Button variant='primary' size='lg' className='w-100'>
                     Buy online now
                     <svg
@@ -123,7 +124,7 @@ function ProductShowcase(props) {
                       width='20'
                       height='20'
                       fill='currentColor'
-                      class='bi bi-cart2 ms-2 mb-1'
+                      className='bi bi-cart2 ms-2 mb-1'
                       viewBox='0 0 16 16'>
                       <path d='M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l1.25 5h8.22l1.25-5H3.14zM5 13a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z' />
                     </svg>
@@ -136,24 +137,24 @@ function ProductShowcase(props) {
       </Container>
       <Container className='pt-2'>
         <Row>
-          <p class='fs-4 text-primary fw-bold'>Specifications:</p>
+          <p className='fs-4 text-primary fw-bold'>Specifications:</p>
         </Row>
         <Row>
           <Col md={3} className='text-center'>
             <Image className='text-primary' src={cpu} alt='cpu' />
-            <p class='mt-2 lead'>{data.shortInfo?.CPU}</p>
+            <p className='mt-2 lead'>{data.shortInfo?.CPU ? data.shortInfo?.CPU : "No data"}</p>
           </Col>
           <Col md={3} className='text-center'>
             <Image className='text-primary' src={gpu} alt='gpu' />
-            <p class='mt-2 lead'>{data.shortInfo?.GPU}</p>
+            <p className='mt-2 lead'>{data.shortInfo?.GPU ? data.shortInfo?.GPU : "No data"}</p>
           </Col>
           <Col md={3} className='text-center'>
             <Image className='text-primary' src={ssd} alt='ssd' />
-            <p class='mt-2 lead'>{data.shortInfo?.SSD} SSD</p>
+            <p className='mt-2 lead'>{data.shortInfo?.SSD ? data.shortInfo?.SSD : "No data"}</p>
           </Col>
           <Col md={3} className='text-center'>
             <Image className='text-primary' src={ram} alt='ram' />
-            <p class='mt-2 lead'>{data.shortInfo?.RAM}</p>
+            <p className='mt-2 lead'>{data.shortInfo?.RAM ? data.shortInfo?.RAM : "No data"}</p>
           </Col>
         </Row>
         <Row className='my-5'>

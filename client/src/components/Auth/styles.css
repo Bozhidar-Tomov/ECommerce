@@ -21,3 +21,11 @@
 .switch-btn:focus {
   outline: 0;
 }
+
+.alert_ {
+  position: fixed !important;
+  top: 10px;
+  left: 2.5%;
+  width: 95%;
+  z-index: 5;
+}

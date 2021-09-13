@@ -11,9 +11,11 @@ const CONNECTION_URL = process.env.CONNECTION_URL;
 app.use(cors());
 app.use(express.json());
 
-const productsRouter = require("./routes/products");
+const productRoutes = require("./routes/products");
+const userRoutes = require("./routes/users");
 
-app.use("/products", productsRouter);
+app.use("/products", productRoutes);
+app.use("/users", userRoutes);
 
 mongoose
   .connect(CONNECTION_URL, {
