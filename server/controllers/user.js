@@ -26,7 +26,9 @@ const signin = async (req, res) => {
   const { email, password, rememberMe, token, ip } = req.body;
 
   if (!(await validateHuman(token, ip))) {
-    return res.status(400).json({ message: "Failed reCAPTCHA" });
+    return res
+      .status(400)
+      .json({ message: "You can't sign in right now. Try again later (0x255r)" });
   }
 
   try {
@@ -40,7 +42,7 @@ const signin = async (req, res) => {
       expiresIn: 60 * 60,
     });
 
-    res.status(200).json({ result: existingUser, token, rememberMe });
+    return res.status(200).json({ result: existingUser, token, rememberMe });
   } catch (error) {
     console.log("error user signin", error);
     res.status(500).json({ message: "Something went wrong on our side." });
@@ -52,7 +54,9 @@ const signup = async (req, res) => {
     req.body;
 
   if (!(await validateHuman(token, ip))) {
-    return res.status(400).json({ message: "Failed reCAPTCHA" });
+    return res
+      .status(400)
+      .json({ message: "You can't sign in right now. Try again later (0x255r)" });
   }
 
   try {
@@ -76,7 +80,7 @@ const signup = async (req, res) => {
     const token = jwt.sign({ email: result.email, id: result._id }, SECRET_KEY, {
       expiresIn: 60 * 60,
     });
-    res.status(200).json({ result, token, rememberMe });
+    return res.status(200).json({ result, token, rememberMe });
   } catch (error) {
     console.log("error user signup", error);
     res.status(500).json({ message: "Something went wrong on our side." });

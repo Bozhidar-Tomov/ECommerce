@@ -27,8 +27,7 @@ import { Formik } from "formik";
 import * as yup from "yup";
 
 import countries from "countries-list";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { signup, signin } from "../../actions/auth";
 
 import ReCAPTCHA from "react-google-recaptcha";

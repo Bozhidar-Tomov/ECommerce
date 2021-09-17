@@ -13,4 +13,8 @@ API.interceptors.request.use((req) => {
 
 export const signin = (formData) => API.post("/users/signin", formData);
 export const signup = (formData) => API.post("/users/signup", formData);
-export const deleteUser = (formData) => API.post("/users/delete_user", formData);
+export const deleteUser = (formData) => API.delete("/users/delete_user", formData);
+
+export const addPromoCode = (formData) => API.post("/promo-codes/add", formData);
+export const validatePromoCode = (formData) => API.post("/promo-codes/validate", formData);
+export const deletePromoCode = (formData) => API.delete("/promo-codes/deletePromoCode", formData);
