@@ -66,7 +66,7 @@ function ProductShowcase(props) {
   console.log(data);
 
   return (
-    <section>
+    <React.Fragment>
       <Container fluid='lg' className='pb-5'>
         <Row>
           <Col lg={6} md={4} className='d-flex justify-content-center align-items-center'>
@@ -173,7 +173,7 @@ function ProductShowcase(props) {
         </Row>
       </Container>
       <Footer />
-    </section>
+    </React.Fragment>
   );
 }
 

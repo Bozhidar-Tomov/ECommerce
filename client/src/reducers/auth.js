@@ -1,4 +1,4 @@
-import { AUTH, LOGOUT, ERROR } from "../constants/actionTypes";
+import { AUTH, LOGOUT, AUTH_ERROR } from "../constants/actionTypes";
 
 const authReducer = (state = { authData: null, errors: null }, action) => {
   switch (action.type) {
@@ -15,7 +15,7 @@ const authReducer = (state = { authData: null, errors: null }, action) => {
       sessionStorage.removeItem("profile");
       return { ...state, authData: null, errors: null };
 
-    case ERROR:
+    case AUTH_ERROR:
       return { ...state, errors: action?.payload };
 
     default:

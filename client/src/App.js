@@ -11,6 +11,7 @@ const LazyProductShowcase = React.lazy(() =>
   import("./components/ProductShowcase/ProductShowcase.component")
 );
 const LazyCheckout = React.lazy(() => import("./components/Checkout/Checkout.component"));
+const LazyProtectedRoute = React.lazy(() => import("./components/ProtectedRoute.component"));
 
 function App() {
   return (
@@ -23,7 +24,7 @@ function App() {
           <Route exact path='/auth' component={LazyAuth} />
           <Route exact path='/store' component={LazyStore} />
           <Route exact path='/product/:id' component={LazyProductShowcase} />
-          <Route exact path='/checkout/:id' component={LazyCheckout} />
+          <LazyProtectedRoute exact path='/checkout/:id' component={LazyCheckout} />
         </Switch>
       </React.Suspense>
     </Router>

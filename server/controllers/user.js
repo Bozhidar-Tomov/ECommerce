@@ -8,10 +8,10 @@ require("dotenv").config();
 const SECRET_KEY = process.env.SECRET_KEY;
 const RECAPTCHA_SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
-async function validateHuman(token, ip) {
+async function validateHuman(recaptchaToken, ip) {
   return await axios
     .post(
-      `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${token}&remoteip=${ip}`
+      `https://www.google.com/recaptcha/api/siteverify?secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}&remoteip=${ip}`
     )
     .then((res) => {
       return res.data.success;
@@ -23,11 +23,11 @@ async function validateHuman(token, ip) {
 }
 
 const signin = async (req, res) => {
-  const { email, password, rememberMe, token, ip } = req.body;
+  const { email, password, rememberMe, recaptchaToken, googleToken, ip } = req.body;
 
-  if (!(await validateHuman(token, ip))) {
+  if (!(await validateHuman(recaptchaToken, ip))) {
     return res
-      .status(400)
+      .status(401)
       .json({ message: "You can't sign in right now. Try again later (0x255r)" });
   }
 
@@ -39,10 +39,12 @@ const signin = async (req, res) => {
     if (!isPasswordCorrect) return res.status(400).json({ message: "Invalid credentials." });
 
     const token = jwt.sign({ email: existingUser.email, id: existingUser._id }, SECRET_KEY, {
-      expiresIn: 60 * 60,
+      expiresIn: 60 * 60 * 24,
     });
 
-    return res.status(200).json({ result: existingUser, token, rememberMe });
+    return res
+      .status(200)
+      .json({ result: existingUser, token: googleToken ? googleToken : token, rememberMe });
   } catch (error) {
     console.log("error user signin", error);
     res.status(500).json({ message: "Something went wrong on our side." });
@@ -50,21 +52,31 @@ const signin = async (req, res) => {
 };
 
 const signup = async (req, res) => {
-  const { firstName, lastName, email, country, password, confirmPassword, rememberMe, token, ip } =
-    req.body;
+  const {
+    firstName,
+    lastName,
+    email,
+    country,
+    password,
+    confirmPassword,
+    rememberMe,
+    recaptchaToken,
+    googleToken,
+    ip,
+  } = req.body;
 
-  if (!(await validateHuman(token, ip))) {
+  if (!(await validateHuman(recaptchaToken, ip))) {
     return res
-      .status(400)
+      .status(401)
       .json({ message: "You can't sign in right now. Try again later (0x255r)" });
   }
 
   try {
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "User already exists." });
+    if (existingUser) return res.status(422).json({ message: "User already exists." });
 
     if (password !== confirmPassword) {
-      return res.status(400).json({ message: "Password does not match." });
+      return res.status(401).json({ message: "Password does not match." });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -78,9 +90,9 @@ const signup = async (req, res) => {
       password: hashedPassword,
     });
     const token = jwt.sign({ email: result.email, id: result._id }, SECRET_KEY, {
-      expiresIn: 60 * 60,
+      expiresIn: 60 * 60 * 24,
     });
-    return res.status(200).json({ result, token, rememberMe });
+    return res.status(201).json({ result, token: googleToken ? googleToken : token, rememberMe });
   } catch (error) {
     console.log("error user signup", error);
     res.status(500).json({ message: "Something went wrong on our side." });

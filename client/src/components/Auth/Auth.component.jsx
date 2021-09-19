@@ -5,7 +5,7 @@ import "./styles.css";
 
 import { GoogleLogin } from "react-google-login";
 
-import { AUTH, ERROR } from "../../constants/actionTypes";
+import { AUTH_ERROR } from "../../constants/actionTypes";
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -68,7 +68,6 @@ const schemaSignIn = yup.object().shape({
 
 function Auth() {
   const error = useSelector((state) => state.auth.errors);
-  console.log("rendering");
   const [isSignUp, setSignUp] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [location, setLocation] = useState("");
@@ -78,14 +77,27 @@ function Auth() {
   const recaptchaRef = useRef();
 
   const googleSuccess = async (res) => {
-    const result = res?.profileObj;
-    const token = res?.tokenId;
+    const result = res.profileObj;
+    const googleToken = res.tokenId;
+    console.log(result);
 
-    try {
-      dispatch({ type: AUTH, payload: { result, token } });
-      history.push("/");
-    } catch (err) {
-      console.log(err);
+    const formData = {
+      firstName: result.givenName,
+      lastName: result.familyName,
+      email: result.email,
+      country: location,
+      password: result.googleId,
+      confirmPassword: result.googleId,
+      rememberMe: false,
+    };
+
+    const recaptchaToken = await recaptchaRef.current.executeAsync();
+    recaptchaRef.current.reset();
+
+    if (isSignUp) {
+      dispatch(signup({ ...formData, recaptchaToken, googleToken, ip }, history));
+    } else {
+      dispatch(signin({ ...formData, recaptchaToken, googleToken, ip }, history));
     }
   };
 
@@ -139,13 +151,13 @@ function Auth() {
           <Formik
             validationSchema={isSignUp ? schemaSignUp : schemaSignIn}
             onSubmit={async (formData) => {
-              const token = await recaptchaRef.current.executeAsync();
+              const recaptchaToken = await recaptchaRef.current.executeAsync();
               recaptchaRef.current.reset();
 
               if (isSignUp) {
-                dispatch(signup({ ...formData, token, ip }, history));
+                dispatch(signup({ ...formData, recaptchaToken, ip }, history));
               } else {
-                dispatch(signin({ ...formData, token, ip }, history));
+                dispatch(signin({ ...formData, recaptchaToken, ip }, history));
               }
             }}
             initialValues={{
@@ -339,7 +351,7 @@ function Auth() {
                         type='button'
                         onClick={() => {
                           setSignUp((e) => !e);
-                          dispatch({ type: ERROR, payload: null });
+                          dispatch({ type: AUTH_ERROR, payload: null });
                           handleReset();
                         }}>
                         {isSignUp
