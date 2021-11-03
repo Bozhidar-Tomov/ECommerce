@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
 import App from "./App";
 
 import { Provider } from "react-redux";
@@ -9,7 +8,7 @@ import thunk from "redux-thunk";
 
 import reducers from "./reducers";
 
-import "bootstrap/dist/css/bootstrap.min.css";
+import "./main.scss";
 
 const store = createStore(reducers, compose(applyMiddleware(thunk)));
 

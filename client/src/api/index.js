@@ -11,6 +11,8 @@ API.interceptors.request.use((req) => {
   return req;
 });
 
+export const fetchProductData = (productId = "") => API.get(`products/${productId}`);
+
 export const signin = (formData) => API.post("/users/signin", formData);
 export const signup = (formData) => API.post("/users/signup", formData);
 export const deleteUser = (formData) => API.delete("/users/delete_user", formData);
@@ -18,3 +20,7 @@ export const deleteUser = (formData) => API.delete("/users/delete_user", formDat
 export const addPromoCode = (formData) => API.post("/promo-codes/add", formData);
 export const validatePromoCode = (formData) => API.post("/promo-codes/validate", formData);
 export const deletePromoCode = (formData) => API.delete("/promo-codes/deletePromoCode", formData);
+
+export const verifyEmail = (token) => API.get(`/users/validate/${token}`);
+export const sendVerificationEmail = (userInfo) =>
+  API.post("/users/sendVerificationEmail", userInfo);

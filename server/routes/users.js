@@ -1,9 +1,10 @@
 const router = require("express").Router();
 
-const { signin, signup, deleteUser } = require("../controllers/user.js");
+const { signin, signup, sendVerificationEmail, validate } = require("../controllers/user.js");
 
 router.post("/signin", signin);
 router.post("/signup", signup);
-router.post("/delete_user", deleteUser);
+router.post("/sendVerificationEmail", sendVerificationEmail);
+router.get("/validate/:token", validate);
 
 module.exports = router;

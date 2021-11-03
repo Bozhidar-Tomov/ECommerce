@@ -30,9 +30,11 @@ const userSchema = new Schema(
         ref: "products",
       },
     ],
+    isAccountValidated: { type: Boolean, default: false },
   },
   {
     timestamps: true,
+    validateBeforeSave: true,
   }
 );
 

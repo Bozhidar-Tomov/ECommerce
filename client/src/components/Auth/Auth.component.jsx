@@ -5,7 +5,7 @@ import "./styles.css";
 
 import { GoogleLogin } from "react-google-login";
 
-import { AUTH_ERROR } from "../../constants/actionTypes";
+import { CLEAR_ERROR } from "../../constants/actionTypes";
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -15,6 +15,7 @@ import Card from "react-bootstrap/Card";
 import InputGroup from "react-bootstrap/InputGroup";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
+import Spinner from "react-bootstrap/Spinner";
 
 import { BsPersonLinesFill } from "react-icons/bs";
 import { FaMapMarkerAlt } from "react-icons/fa";
@@ -22,6 +23,7 @@ import { CgPassword } from "react-icons/cg";
 import { BiShow } from "react-icons/bi";
 import { BiHide } from "react-icons/bi";
 import { ImGoogle } from "react-icons/im";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -31,8 +33,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { signup, signin } from "../../actions/auth";
 
 import ReCAPTCHA from "react-google-recaptcha";
-
-const { REACT_APP_GOOGLE_ID } = process.env;
 
 const schemaSignUp = yup.object().shape({
   firstName: yup
@@ -67,11 +67,14 @@ const schemaSignIn = yup.object().shape({
 });
 
 function Auth() {
+  console.log("rendering");
   const error = useSelector((state) => state.auth.errors);
+  useSelector((state) => console.log(state));
+
   const [isSignUp, setSignUp] = useState(false);
   const [showPass, setShowPass] = useState(false);
-  const [location, setLocation] = useState("");
-  const [ip, setIp] = useState("");
+  const [userGeoId, setUserGeoId] = useState(sessionStorage.getItem("userGeoId"));
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const history = useHistory();
   const recaptchaRef = useRef();
@@ -85,7 +88,7 @@ function Auth() {
       firstName: result.givenName,
       lastName: result.familyName,
       email: result.email,
-      country: location,
+      country: userGeoId[0],
       password: result.googleId,
       confirmPassword: result.googleId,
       rememberMe: false,
@@ -95,9 +98,9 @@ function Auth() {
     recaptchaRef.current.reset();
 
     if (isSignUp) {
-      dispatch(signup({ ...formData, recaptchaToken, googleToken, ip }, history));
+      dispatch(signup({ ...formData, recaptchaToken, googleToken, ip: userGeoId[1] }, history));
     } else {
-      dispatch(signin({ ...formData, recaptchaToken, googleToken, ip }, history));
+      dispatch(signin({ ...formData, recaptchaToken, googleToken, ip: userGeoId[1] }, history));
     }
   };
 
@@ -105,20 +108,23 @@ function Auth() {
     console.log("google unsuccessful", err);
   };
 
-  useEffect(() => {
+  if (!userGeoId) {
     async function getLocation() {
       await fetch("https://ipapi.co/json/")
         .then(function (response) {
           return response.json();
         })
         .then(function (data) {
-          console.log(data);
-          setLocation(data.country_name);
-          setIp(data.ip);
+          sessionStorage.setItem("userGeoId", [data.country_name, data.ip]);
+          setUserGeoId([data.country_name, data.ip]);
         });
     }
     getLocation();
-  }, []);
+  }
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, [error]);
 
   function getCountries() {
     return Object.keys(countries?.countries).map((code) => {
@@ -130,17 +136,22 @@ function Auth() {
           </option>
         );
       }
-      return <></>;
+      return null;
     });
-  }
-  if (!location) {
-    return <></>;
   }
 
   return (
     <Container fluid='md' className='my-5'>
-      <Alert role='alert' variant='danger' className='alert_ fs-5' show={error}>
-        <span className='fw-bold ms-4'>Error: </span> {error}
+      <Alert
+        role='alert'
+        variant='danger'
+        className='alert_ fs-5 d-flex align-items-center justify-content-center'
+        show={error}
+        dismissible
+        onClose={() => dispatch({ type: CLEAR_ERROR, payload: null })}>
+        <AiOutlineExclamationCircle size='30' />
+
+        <span>&nbsp;&nbsp;&nbsp;{error}</span>
       </Alert>
 
       <Card className=' shadow-lg border border-primary border-2 mt-2 '>
@@ -154,19 +165,22 @@ function Auth() {
               const recaptchaToken = await recaptchaRef.current.executeAsync();
               recaptchaRef.current.reset();
 
+              dispatch({ type: CLEAR_ERROR });
+              setIsLoading(true);
+
               if (isSignUp) {
-                dispatch(signup({ ...formData, recaptchaToken, ip }, history));
+                dispatch(signup({ ...formData, recaptchaToken, ip: userGeoId[1] }, history));
               } else {
-                dispatch(signin({ ...formData, recaptchaToken, ip }, history));
+                dispatch(signin({ ...formData, recaptchaToken, ip: userGeoId[1] }, history));
               }
             }}
             initialValues={{
-              firstName: "",
-              lastName: "",
-              email: "",
-              country: location,
-              password: "",
-              confirmPassword: "",
+              firstName: "rrr",
+              lastName: "ttt",
+              email: "w@w.d",
+              country: "r",
+              password: "asdfghas",
+              confirmPassword: "asdfghas",
               rememberMe: false,
             }}>
             {({ handleSubmit, handleChange, handleReset, values, touched, errors }) => (
@@ -247,8 +261,8 @@ function Auth() {
                           <InputGroup.Text>
                             <FaMapMarkerAlt />
                           </InputGroup.Text>
-                          <Form.Select defaultValue={location} onChange={handleChange}>
-                            {getCountries()}{" "}
+                          <Form.Select defaultValue={userGeoId[0]} onChange={handleChange}>
+                            {getCountries()}
                           </Form.Select>
                         </InputGroup>
                       </Form.Group>
@@ -305,17 +319,20 @@ function Auth() {
                       </Form.Group>
                     )}
                   </Row>
-                  <Row className=' mt-3'>
-                    <Col md={2}>
-                      <Form.Check
-                        name='rememberMe'
-                        className='ms-3'
-                        type='checkbox'
-                        label='Remember me'
-                        onChange={handleChange}
-                      />
-                    </Col>
-                  </Row>
+                  {!isSignUp && (
+                    <Row className=' mt-3'>
+                      <Col md={2}>
+                        <Form.Check
+                          name='rememberMe'
+                          className='ms-3'
+                          type='checkbox'
+                          label='Remember me'
+                          onChange={handleChange}
+                        />
+                      </Col>
+                    </Row>
+                  )}
+
                   <Row>
                     <Col md={6} className='text-center mt-2'>
                       <ReCAPTCHA
@@ -324,17 +341,34 @@ function Auth() {
                         badge='bottomright'
                         ref={recaptchaRef}
                       />
-                      <Button className='w-100 my-1' type='submit'>
-                        {isSignUp ? "Sign Up" : "Sign In"}
+                      <Button className='w-100 my-1' type='submit' disabled={isLoading}>
+                        {!isLoading ? (
+                          isSignUp ? (
+                            "Sign Up"
+                          ) : (
+                            "Sign In"
+                          )
+                        ) : (
+                          <React.Fragment>
+                            <Spinner
+                              as='span'
+                              animation='border'
+                              size='sm'
+                              role='status'
+                              aria-hidden='true'
+                            />
+                            <span> Loading... </span>
+                          </React.Fragment>
+                        )}
                       </Button>
                       <GoogleLogin
-                        clientId={REACT_APP_GOOGLE_ID}
+                        clientId={process.env.REACT_APP_GOOGLE_ID}
                         render={(renderProps) => (
                           <Button
                             variant='outline-primary'
                             className='w-100 my-1'
                             onClick={renderProps.onClick}
-                            disabled={renderProps.disabled}>
+                            disabled={renderProps.disabled || isLoading}>
                             <ImGoogle />
                             <span>{isSignUp ? " Sign Up " : " Sign In "}with Google</span>
                           </Button>
@@ -351,7 +385,7 @@ function Auth() {
                         type='button'
                         onClick={() => {
                           setSignUp((e) => !e);
-                          dispatch({ type: AUTH_ERROR, payload: null });
+                          dispatch({ type: CLEAR_ERROR, payload: null });
                           handleReset();
                         }}>
                         {isSignUp

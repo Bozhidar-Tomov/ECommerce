@@ -6,6 +6,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import Navbar from "react-bootstrap/Navbar";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
+import Badge from "react-bootstrap/Badge";
 import Nav from "react-bootstrap/Nav";
 import Avatar from "react-avatar";
 
@@ -68,7 +69,12 @@ function NavBar() {
                   src={user?.result.imageUrl}
                   size='36'
                 />
-                <span> {user?.result.name} </span>
+                <span className='fs-6'> {user?.result.name}</span>
+                {!user?.result.isAccountValidated && (
+                  <Badge pill className='ms-3 text-dark' bg='warning'>
+                    Not verified
+                  </Badge>
+                )}
                 <Button as='a' href='/' variant='outline-secondary ms-4' onClick={signOut}>
                   Sign Out
                 </Button>

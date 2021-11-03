@@ -1,7 +1,7 @@
 import React from "react";
 
 import "./styles.css";
-import laptop from "../../../images/laptop.png";
+import laptop from "../../../images/laptop.webp";
 
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
@@ -9,23 +9,25 @@ import Card from "react-bootstrap/Card";
 import { Link } from "react-router-dom";
 
 function getInfo(info) {
-  if (info) {
-    return Object.entries(info).map(([key_, value_]) => {
-      return (
-        <>
-          <span>
-            <b>{key_}: </b> {value_}
-          </span>
-          <br />
-        </>
-      );
-    });
+  if (!info) {
+    return null;
   }
+
+  return Object.entries(info).map(([key_, value_]) => {
+    return (
+      <React.Fragment key={key_}>
+        <span>
+          <b>{key_}: </b> {value_}
+        </span>
+        <br />
+      </React.Fragment>
+    );
+  });
 }
 
 function Product(props) {
   return (
-    <Col xl={3} lg={4} md={6} sm={12}>
+    <Col xl={3} lg={4} md={6} sm={12} key={props._id}>
       <Card className='card_ shadow p-3'>
         <img src={laptop} className='card-img-top' alt='' />
         <Card.Body>

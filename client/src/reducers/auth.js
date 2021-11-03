@@ -1,6 +1,6 @@
-import { AUTH, LOGOUT, AUTH_ERROR } from "../constants/actionTypes";
+import { AUTH, LOGOUT, AUTH_ERROR, CLEAR_ERROR, USER_INFORMATION } from "../constants/actionTypes";
 
-const authReducer = (state = { authData: null, errors: null }, action) => {
+const authReducer = (state = { authData: null, errors: null, userInfo: null }, action) => {
   switch (action.type) {
     case AUTH:
       if (action.payload.rememberMe) {
@@ -10,6 +10,9 @@ const authReducer = (state = { authData: null, errors: null }, action) => {
       }
       return { ...state, authData: action?.payload, errors: null };
 
+    case USER_INFORMATION:
+      return { ...state, userInfo: action?.payload };
+
     case LOGOUT:
       localStorage.removeItem("profile");
       sessionStorage.removeItem("profile");
@@ -18,8 +21,11 @@ const authReducer = (state = { authData: null, errors: null }, action) => {
     case AUTH_ERROR:
       return { ...state, errors: action?.payload };
 
+    case CLEAR_ERROR:
+      return { ...state, errors: null };
+
     default:
-      return state;
+      return { ...state };
   }
 };
 
