@@ -16,6 +16,7 @@ const authReducer = (state = { authData: null, errors: null, userInfo: null }, a
     case LOGOUT:
       localStorage.removeItem("profile");
       sessionStorage.removeItem("profile");
+      window.location.href.replace("http://localhost/");
       return { ...state, authData: null, errors: null };
 
     case AUTH_ERROR:

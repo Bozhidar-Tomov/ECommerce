@@ -38,6 +38,7 @@ const signin = async (req, res) => {
 
     const token = jwt.sign(
       {
+        name: existingUser.name,
         email: existingUser.email,
         id: existingUser._id,
         isAccountValidated: existingUser.isAccountValidated,
@@ -49,11 +50,6 @@ const signin = async (req, res) => {
     );
 
     return res.status(200).json({
-      result: {
-        name: existingUser.name,
-        email: existingUser.email,
-        userID: existingUser._id,
-      },
       token,
       rememberMe,
     });

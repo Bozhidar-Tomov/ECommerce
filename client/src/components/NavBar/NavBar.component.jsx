@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import * as actionType from "../../constants/actionTypes";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import Navbar from "react-bootstrap/Navbar";
 import Button from "react-bootstrap/Button";
@@ -23,20 +23,17 @@ function NavBar() {
     )
   );
   const dispatch = useDispatch();
-  const history = useHistory();
   const location = useLocation();
+  const decodedToken = user?.token ? decode(user.token) : null;
 
   const signOut = useCallback(() => {
     dispatch({ type: actionType.LOGOUT });
 
-    history.push("/auth");
     setUser(null);
-  }, [dispatch, history]);
+  }, [dispatch]);
 
   useEffect(() => {
-    const token = user?.token;
-    if (token) {
-      const decodedToken = decode(token);
+    if (decodedToken) {
       if (decodedToken.exp * 1000 < new Date().getTime()) signOut();
     }
     setUser(
@@ -46,6 +43,7 @@ function NavBar() {
           : sessionStorage.getItem("profile")
       )
     );
+    // eslint-disable-next-line
   }, [user?.token, location, signOut]);
 
   return (
@@ -60,17 +58,17 @@ function NavBar() {
             <Nav.Link href='/store'>Store</Nav.Link>
           </Nav>
 
-          {user?.result ? (
+          {decodedToken ? (
             <Nav>
               <Container>
                 <Avatar
-                  name={user?.result.name}
+                  name={decodedToken.name}
                   round={true}
-                  src={user?.result.imageUrl}
+                  src={decodedToken.imageUrl}
                   size='36'
                 />
-                <span className='fs-6'> {user?.result.name}</span>
-                {!user?.result.isAccountValidated && (
+                <span className='fs-6'> {decodedToken.name}</span>
+                {!decodedToken.isAccountValidated && (
                   <Badge pill className='ms-3 text-dark' bg='warning'>
                     Not verified
                   </Badge>

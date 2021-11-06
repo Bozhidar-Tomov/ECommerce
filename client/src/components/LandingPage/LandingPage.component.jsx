@@ -5,6 +5,12 @@ import "./styles.css";
 import Footer from "../Footer/Footer.component";
 
 function LandingPage() {
+  const user = JSON.parse(
+    localStorage.getItem("profile")
+      ? localStorage.getItem("profile")
+      : sessionStorage.getItem("profile")
+  );
+
   return (
     <React.Fragment>
       <div className='container-xl align-items-center justify-content-center'>
@@ -256,9 +262,15 @@ function LandingPage() {
               </div>
               <div className='row g-2 mx-auto my-auto'>
                 <div className='col'>
-                  <a className='btn btn btn-primary w-75' href='/auth'>
-                    Sign In
-                  </a>
+                  {user ? (
+                    <a className='btn btn btn-primary w-75' href='/store'>
+                      Go to store
+                    </a>
+                  ) : (
+                    <a className='btn btn btn-primary w-75' href='/auth'>
+                      Sign In
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

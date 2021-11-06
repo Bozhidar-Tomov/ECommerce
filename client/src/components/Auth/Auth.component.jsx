@@ -375,7 +375,7 @@ function Auth() {
                         )}
                         onSuccess={googleSuccess}
                         onFailure={googleFailure}
-                        cookiePolicy='single_host_origin'
+                        cookiePolicy={"single_host_origin"}
                       />
                     </Col>
 
