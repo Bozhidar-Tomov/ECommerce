@@ -48,17 +48,16 @@ function NavBar() {
 
   return (
     <Navbar expand='md' className='pt-3 mx-5'>
-      <Container>
-        <Navbar.Brand href='/' className='fw-bold fst-normal text-primary'>
-          Online Partner Retailer
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls='navbarScroll' />
-        <Navbar.Collapse id='navbarScroll'>
-          <Nav className='me-auto my-2 my-lg-0' navbarScroll>
-            <Nav.Link href='/store'>Store</Nav.Link>
-          </Nav>
-
-          {decodedToken ? (
+      <Navbar.Brand href='/' className='fw-bold fst-normal text-primary'>
+        Online Partner Retailer
+      </Navbar.Brand>
+      <Navbar.Toggle aria-controls='navbarScroll' />
+      <Navbar.Collapse id='navbarScroll'>
+        <Nav className='me-auto my-2 my-lg-0' navbarScroll>
+          <Nav.Link href='/store'>Store</Nav.Link>
+        </Nav>
+        {location.pathname !== "/auth" &&
+          (decodedToken ? (
             <Nav>
               <Container>
                 <Avatar
@@ -84,9 +83,8 @@ function NavBar() {
                 Sign In
               </Button>
             </Nav>
-          )}
-        </Navbar.Collapse>
-      </Container>
+          ))}
+      </Navbar.Collapse>
     </Navbar>
   );
 }

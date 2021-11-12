@@ -1,10 +1,16 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 import "./styles.css";
 
 import Footer from "../Footer/Footer.component";
+import Alert from "react-bootstrap/Alert";
 
 function LandingPage() {
+  const error = useSelector((state) => state.auth.errors);
+  const dispatch = useDispatch();
   const user = JSON.parse(
     localStorage.getItem("profile")
       ? localStorage.getItem("profile")
@@ -13,6 +19,17 @@ function LandingPage() {
 
   return (
     <React.Fragment>
+      <Alert
+        role='alert'
+        variant='danger'
+        className='alert_ fs-5 d-flex align-items-center justify-content-center'
+        show={error}
+        dismissible
+        onClose={() => dispatch({ type: "CLEAR_ERROR", payload: null })}>
+        <AiOutlineExclamationCircle size='30' />
+
+        <span>&nbsp;&nbsp;&nbsp;{error}</span>
+      </Alert>
       <div className='container-xl align-items-center justify-content-center'>
         <div className='row'>
           <div className='col-md-5 col-lg-8 col-12'>

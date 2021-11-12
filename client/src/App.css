@@ -1,1 +1,28 @@
 /* #D5C6FF */
+
+.r {
+  position: fixed !important;
+  top: 5vh;
+  right: 5vw;
+  height: 90vh;
+  z-index: -5;
+}
+
+.n {
+  width: 35rem;
+}
+
+@media (max-width: 768px) {
+  .r {
+    display: none;
+  }
+}
+
+/* body,
+.card,
+.form-select,
+.input-group-text,
+input {
+  background-color: rgb(34, 34, 39) !important;
+  color: rgb(223, 223, 223) !important;
+} */

@@ -1,8 +1,6 @@
 import "./App.css";
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import ActivationStatus from "./components/AccountActivation/ActivationStatus.component";
-import Verify from "./components/AccountActivation/Verify.component";
 
 const LazyNavbar = React.lazy(() => import("./components/NavBar/NavBar.component"));
 const LazyLandingPage = React.lazy(() => import("./components/LandingPage/LandingPage.component"));
@@ -14,6 +12,10 @@ const LazyProductShowcase = React.lazy(() =>
 );
 const LazyCheckout = React.lazy(() => import("./components/Checkout/Checkout.component"));
 const LazyProtectedRoute = React.lazy(() => import("./components/ProtectedRoute.component"));
+const LazyActivationStatus = React.lazy(() =>
+  import("./components/AccountActivation/ActivationStatus.component")
+);
+const LazyVerify = React.lazy(() => import("./components/AccountActivation/Verify.component"));
 
 function App() {
   return (
@@ -24,9 +26,9 @@ function App() {
         <Switch>
           <Route exact path='/' component={LazyLandingPage} />
           <Route exact path='/auth' component={LazyAuth} />
-          <Route exact path='/auth/verify' component={Verify} />
+          <Route exact path='/auth/verify' component={LazyVerify} />
           {/* TODO: Make ActivationStatus a protected route */}
-          <Route exact path='/auth/activationStatus/:token' component={ActivationStatus} />
+          <Route exact path='/auth/activationStatus/:token' component={LazyActivationStatus} />
           <Route exact path='/store' component={LazyStore} />
           <Route exact path='/product/:id' component={LazyProductShowcase} />
           <LazyProtectedRoute

@@ -133,7 +133,7 @@ const validate = async (req, res) => {
         });
       else {
         return res.status(409).json({
-          title: "Your email has been already verified!",
+          title: "Your email has already been verified!",
           description: "You can now sign in and start using our services",
         });
       }

@@ -18,12 +18,12 @@ const isAuthenticated = () => {
     console.log(decodedToken);
     if (decodedToken.exp * 1000 > new Date().getTime()) {
       if (!decodedToken.isAccountValidated)
-        return "Your account is not verified! Verify your account in order to proceed.";
+        return ["Your account is not verified! Verify your account in order to proceed.", "/"];
       return true;
     }
-    return "Your session has expired. Sign in again.";
+    return ["Your session has expired. Sign in again.", "/auth"];
   }
-  return "You have to sign in in order to proceed.";
+  return ["You have to sign in in order to proceed.", "/auth"];
 };
 
 function ProtectedRoute({ component: Component, ...props }) {
@@ -36,8 +36,8 @@ function ProtectedRoute({ component: Component, ...props }) {
         const res = isAuthenticated();
         if (res === true) return <Component {...props} />;
         else {
-          dispatch({ type: AUTH_ERROR, payload: res });
-          return <Redirect to='/auth' />;
+          dispatch({ type: AUTH_ERROR, payload: res[0] });
+          return <Redirect to={res[1]} />;
         }
       }}
     />
