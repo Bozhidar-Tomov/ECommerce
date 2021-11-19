@@ -29,8 +29,6 @@ function ActivationStatus(props) {
     verifyEmail();
   }, [props.match.params.token]);
 
-  console.log(state);
-  if (!state) return <div>Loading ...</div>;
   return (
     <Container fluid='sm' className='my-5 px-4'>
       <Row className='justify-content-center text-center my-4'>
@@ -72,5 +70,3 @@ function ActivationStatus(props) {
 }
 
 export default ActivationStatus;
-
-//hello world!

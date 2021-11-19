@@ -10,11 +10,11 @@ import Badge from "react-bootstrap/Badge";
 import Nav from "react-bootstrap/Nav";
 import Avatar from "react-avatar";
 
+import { Link } from "react-router-dom";
+
 import decode from "jwt-decode";
 
-import "./styles.css";
-
-function NavBar() {
+function NavBar(props) {
   const [user, setUser] = useState(
     JSON.parse(
       localStorage.getItem("profile")
@@ -54,7 +54,9 @@ function NavBar() {
       <Navbar.Toggle aria-controls='navbarScroll' />
       <Navbar.Collapse id='navbarScroll'>
         <Nav className='me-auto my-2 my-lg-0' navbarScroll>
-          <Nav.Link href='/store'>Store</Nav.Link>
+          <Nav.Link as={Link} to='/store'>
+            Store
+          </Nav.Link>
         </Nav>
         {location.pathname !== "/auth" &&
           (decodedToken ? (
@@ -72,19 +74,29 @@ function NavBar() {
                     Not verified
                   </Badge>
                 )}
-                <Button as='a' href='/' variant='outline-secondary ms-4' onClick={signOut}>
+                <Button as={Link} to='/' variant='outline-secondary ms-4' onClick={signOut}>
                   Sign Out
                 </Button>
               </Container>
             </Nav>
           ) : (
             <Nav>
-              <Button as='a' href='/auth' variant='outline-secondary'>
+              <Button as={Link} to='/auth' variant='outline-secondary'>
                 Sign In
               </Button>
             </Nav>
           ))}
       </Navbar.Collapse>
+      <form className='ms-4 form'>
+        <input
+          onClick={props.theme}
+          id='dark-mode'
+          className='toggle'
+          type='checkbox'
+          role='switch'
+        />
+        <div className='curtain'></div>
+      </form>
     </Navbar>
   );
 }

@@ -9,6 +9,7 @@ import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 
 import Button from "react-bootstrap/Button";
+import { Redirect } from "react-router";
 
 import Image from "react-bootstrap/Image";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +17,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { sendVerificationEmail } from "../../actions/auth";
 
 function Verify() {
+  let count = 0;
+  const user = JSON.parse(
+    localStorage.getItem("profile")
+      ? localStorage.getItem("profile")
+      : sessionStorage.getItem("profile")
+  );
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.auth.userInfo);
 
@@ -23,10 +30,16 @@ function Verify() {
     console.log("run");
     dispatch(sendVerificationEmail(userInfo));
   });
-  //TODO: LIMIT number of resend-s
   function resendEmail() {
-    console.log("resent!");
-    dispatch(sendVerificationEmail(userInfo));
+    if (count < 5) {
+      console.log("resent!");
+      dispatch(sendVerificationEmail(userInfo));
+      count++;
+    }
+  }
+
+  if (user) {
+    return <Redirect to='/' />;
   }
 
   return (

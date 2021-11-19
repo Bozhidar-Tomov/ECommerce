@@ -1,6 +1,10 @@
 import "./App.css";
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+
+import { ThemeProvider } from "styled-components";
+import { GlobalStyles } from "./components/globalStyles";
+import { lightTheme, darkTheme } from "./themes";
 
 const LazyNavbar = React.lazy(() => import("./components/NavBar/NavBar.component"));
 const LazyLandingPage = React.lazy(() => import("./components/LandingPage/LandingPage.component"));
@@ -18,28 +22,36 @@ const LazyActivationStatus = React.lazy(() =>
 const LazyVerify = React.lazy(() => import("./components/AccountActivation/Verify.component"));
 
 function App() {
+  const [theme, setTheme] = useState("light");
+  const themeToggler = () => {
+    theme === "light" ? setTheme("dark") : setTheme("light");
+  };
+  sessionStorage.setItem("theme", theme);
   return (
-    <Router>
-      <React.Suspense fallback=''>
-        <LazyNavbar />
-        <LazyBlob />
-        <Switch>
-          <Route exact path='/' component={LazyLandingPage} />
-          <Route exact path='/auth' component={LazyAuth} />
-          <Route exact path='/auth/verify' component={LazyVerify} />
-          {/* TODO: Make ActivationStatus a protected route */}
-          <Route exact path='/auth/activationStatus/:token' component={LazyActivationStatus} />
-          <Route exact path='/store' component={LazyStore} />
-          <Route exact path='/product/:id' component={LazyProductShowcase} />
-          <LazyProtectedRoute
-            exact
-            path='/checkout/:id'
-            component={LazyCheckout}
-            type='userAuthenticate'
-          />
-        </Switch>
-      </React.Suspense>
-    </Router>
+    <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
+      <GlobalStyles />
+
+      <Router>
+        <React.Suspense fallback=''>
+          <LazyNavbar theme={themeToggler} />
+          <LazyBlob />
+          <Switch>
+            <Route exact path='/' component={LazyLandingPage} />
+            <Route exact path='/auth' component={LazyAuth} />
+            <Route exact path='/auth/verify' component={LazyVerify} />
+            <Route exact path='/auth/activationStatus/:token' component={LazyActivationStatus} />
+            <Route exact path='/store' component={LazyStore} />
+            <Route exact path='/product/:id' component={LazyProductShowcase} />
+            <LazyProtectedRoute
+              exact
+              path='/checkout/:id'
+              component={LazyCheckout}
+              type='userAuthenticate'
+            />
+          </Switch>
+        </React.Suspense>
+      </Router>
+    </ThemeProvider>
   );
 }
 
