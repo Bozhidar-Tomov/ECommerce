@@ -24,11 +24,14 @@ import Footer from "../Footer/Footer.component";
 
 import { Link } from "react-router-dom";
 
+const theme = sessionStorage.getItem("theme");
+const oppositeTheme = theme === "dark" ? "light" : "dark";
+
 function getAdditionalInfo(info) {
   if (info) {
     return Object.entries(info).map(([key_, value_]) => {
       return (
-        <Card className='shadow-sm' key={key_}>
+        <Card className='shadow-sm' key={key_} bg={theme} text={oppositeTheme}>
           <Card.Body>
             <Row className='p-2'>
               <Col>
@@ -130,7 +133,7 @@ function ProductShowcase(props) {
                     variant='primary'
                     size='lg'
                     className='w-100'>
-                    Buy online now
+                    Add to cart &nbsp;
                     <svg
                       xmlns='http://www.w3.org/2000/svg'
                       width='20'

@@ -2,7 +2,7 @@ const Product = require("../models/product.model");
 
 const fetchAllProducts = async (req, res) => {
   await Product.find()
-    .then((products) => res.json(products))
+    .then((products) => res.status(200).json(products))
     .catch((err) => {
       res.status(400).json("Error: " + err);
       console.log(err);

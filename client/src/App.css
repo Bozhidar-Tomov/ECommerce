@@ -1,9 +1,9 @@
 /* #D5C6FF */
 .r {
   position: fixed !important;
-  top: 5vh;
+  top: 78px;
   right: 5vw;
-  height: 90vh;
+  height: 80vh;
   z-index: -1;
 }
 

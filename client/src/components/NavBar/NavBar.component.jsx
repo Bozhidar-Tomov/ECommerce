@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import decode from "jwt-decode";
 
 function NavBar(props) {
+  const theme = sessionStorage.getItem("theme");
   const [user, setUser] = useState(
     JSON.parse(
       localStorage.getItem("profile")
@@ -47,7 +48,7 @@ function NavBar(props) {
   }, [user?.token, location, signOut]);
 
   return (
-    <Navbar expand='md' className='pt-3 mx-5'>
+    <Navbar bg={theme} variant={theme} expand='md' className='pt-3 mx-5'>
       <Navbar.Brand href='/' className='fw-bold fst-normal text-primary'>
         Online Partner Retailer
       </Navbar.Brand>
@@ -89,7 +90,7 @@ function NavBar(props) {
       </Navbar.Collapse>
       <form className='ms-4 form'>
         <input
-          onClick={props.theme}
+          onClick={props.themeToggler}
           id='dark-mode'
           className='toggle'
           type='checkbox'

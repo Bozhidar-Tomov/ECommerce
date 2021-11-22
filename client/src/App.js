@@ -6,6 +6,8 @@ import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./components/globalStyles";
 import { lightTheme, darkTheme } from "./themes";
 
+import Dashboard from "./components/Dashboard/Dashboard.component";
+
 const LazyNavbar = React.lazy(() => import("./components/NavBar/NavBar.component"));
 const LazyLandingPage = React.lazy(() => import("./components/LandingPage/LandingPage.component"));
 const LazyBlob = React.lazy(() => import("./components/Blob/blob.component"));
@@ -33,7 +35,7 @@ function App() {
 
       <Router>
         <React.Suspense fallback=''>
-          <LazyNavbar theme={themeToggler} />
+          <LazyNavbar themeToggler={themeToggler} />
           <LazyBlob />
           <Switch>
             <Route exact path='/' component={LazyLandingPage} />
@@ -42,6 +44,7 @@ function App() {
             <Route exact path='/auth/activationStatus/:token' component={LazyActivationStatus} />
             <Route exact path='/store' component={LazyStore} />
             <Route exact path='/product/:id' component={LazyProductShowcase} />
+            <Route exact path='/table' component={Dashboard} />
             <LazyProtectedRoute
               exact
               path='/checkout/:id'

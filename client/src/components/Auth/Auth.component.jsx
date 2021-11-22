@@ -74,6 +74,8 @@ function Auth() {
       ? localStorage.getItem("profile")
       : sessionStorage.getItem("profile")
   );
+  const theme = sessionStorage.getItem("theme");
+  const oppositeTheme = theme === "dark" ? "light" : "dark";
   const error = useSelector((state) => state.auth.errors);
   const [isSignUp, setSignUp] = useState(false);
   const [showPass, setShowPass] = useState(false);
@@ -91,9 +93,10 @@ function Auth() {
       firstName: result.givenName,
       lastName: result.familyName,
       email: result.email,
-      country: userGeoId[0],
+      country: userGeoId[1],
       password: result.googleId,
       confirmPassword: result.googleId,
+      //FIXME: cannot get and send rememberMe
       rememberMe: false,
     };
 
@@ -150,7 +153,7 @@ function Auth() {
     <React.Fragment>
       <Alert
         role='alert'
-        variant='danger'
+        variant={`${theme === "dark" ? "dark" : "danger"}`}
         className='alert_ fs-5 d-flex align-items-center justify-content-center'
         show={error}
         dismissible
@@ -166,11 +169,14 @@ function Auth() {
         size='invisible'
         badge='bottomright'
         ref={recaptchaRef}
-        theme={sessionStorage.getItem("theme")}
+        theme={theme}
       />
 
       <div className='my-5 mx-md-5 p-2 d-flex justify-content-md-start justify-content-center align-items-center'>
-        <Card className='n shadow-lg border border-primary border-2'>
+        <Card
+          className='n shadow-lg border border-primary border-2'
+          bg={theme}
+          text={oppositeTheme}>
           <Card.Title className='text-primary text-center my-4'>
             <h3>{isSignUp ? "Sign Up" : "Sign In"}</h3>
           </Card.Title>
@@ -200,7 +206,7 @@ function Auth() {
                 rememberMe: false,
               }}>
               {({ handleSubmit, handleChange, handleReset, values, touched, errors }) => (
-                <Form noValidate onSubmit={handleSubmit} className='form-outline form-white'>
+                <Form noValidate onSubmit={handleSubmit}>
                   <Container fluid='md'>
                     {isSignUp && (
                       <>
@@ -214,6 +220,7 @@ function Auth() {
                               <BsPersonLinesFill />
                             </InputGroup.Text>
                             <Form.Control
+                              className={`bg-${theme} text-${oppositeTheme}`}
                               name='firstName'
                               type='text'
                               value={values.firstName}
@@ -236,6 +243,7 @@ function Auth() {
                               <BsPersonLinesFill />
                             </InputGroup.Text>
                             <Form.Control
+                              className={`bg-${theme} text-${oppositeTheme}`}
                               name='lastName'
                               type='text'
                               value={values.lastName}
@@ -261,7 +269,10 @@ function Auth() {
                             <InputGroup.Text>
                               <FaMapMarkerAlt />
                             </InputGroup.Text>
-                            <Form.Select defaultValue={userGeoId[0]} onChange={handleChange}>
+                            <Form.Select
+                              className={`bg-${theme} text-${oppositeTheme}`}
+                              defaultValue={userGeoId[0]}
+                              onChange={handleChange}>
                               {getCountries()}
                             </Form.Select>
                           </InputGroup>
@@ -281,6 +292,7 @@ function Auth() {
                       <InputGroup hasValidation className='mb-2'>
                         <InputGroup.Text className='fw-bold'>@</InputGroup.Text>
                         <Form.Control
+                          className={`bg-${theme} text-${oppositeTheme}`}
                           name='email'
                           type='email'
                           value={values.email}
@@ -304,6 +316,7 @@ function Auth() {
                           <CgPassword />
                         </InputGroup.Text>
                         <Form.Control
+                          className={`bg-${theme} text-${oppositeTheme}`}
                           name='password'
                           type='password'
                           value={values.password}
@@ -326,6 +339,7 @@ function Auth() {
                             <CgPassword />
                           </InputGroup.Text>
                           <Form.Control
+                            className={`bg-${theme} text-${oppositeTheme}`}
                             name='confirmPassword'
                             type={showPass ? "text" : "password"}
                             value={values.confirmPassword}
@@ -385,7 +399,6 @@ function Auth() {
                       </Button>
                       <span className='fs-6 text-center'>OR</span>
                       <GoogleLogin
-                        theme={sessionStorage.getItem("theme")}
                         clientId={process.env.REACT_APP_GOOGLE_ID}
                         render={(renderProps) => (
                           <Button

@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
+const Product = require("../models/product.model");
 const axios = require("axios");
 const { sendConfirmationEmail } = require("../utils/verificationEmail");
 
@@ -149,6 +150,55 @@ const validate = async (req, res) => {
     });
   }
 };
+
+const getCart = async (req, res) => {
+  await User.findById(req.userId)
+    .then(async (data) => {
+      if (data.cart.length === 0) return res.status(204).send();
+      else {
+        await Product.find({ _id: { $in: data.cart } })
+          .then((data) => {
+            let info = [];
+            for (item of data) {
+              info.push({ name: item.name, price: item.price, id: item._id });
+            }
+            res.status(200).send(info);
+          })
+          .catch((err) => {
+            res.status(400).send(err);
+            console.log(err);
+          });
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      return res.status(500).json({ message: "Internal server error" });
+    });
+};
+
+const removeItemFromCart = async (req, res) => {
+  const { item } = req.body;
+
+  await User.findById(req.userId)
+    .then(async (data) => {
+      if (data.cart.length === 0) return res.status(204).send();
+      else {
+        const index = data.cart.indexOf(item);
+        if (index === -1) return res.status(400).send("index error");
+        data.cart.splice(index, 1);
+        await User.findByIdAndUpdate(req.userId, { cart: data.cart })
+          .then(res.status(200).send("removed"))
+          .catch((error) => {
+            console.log(error);
+            return res.status(500).json({ message: "Internal server error" });
+          });
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      return res.status(500).json({ message: "Internal server error" });
+    });
+};
 // try {
 //   let {id} = jwt.verify(req.params.token, process.env.SECRET_KEY);
 // } catch (error) {
@@ -162,3 +212,6 @@ exports.signin = signin;
 exports.signup = signup;
 exports.sendVerificationEmail = sendVerificationEmail;
 exports.validate = validate;
+
+exports.getCart = getCart;
+exports.removeItemFromCart = removeItemFromCart;

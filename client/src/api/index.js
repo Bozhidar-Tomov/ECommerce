@@ -24,3 +24,6 @@ export const deletePromoCode = (formData) => API.delete("/promo-codes/deleteProm
 export const verifyEmail = (token) => API.get(`/users/validate/${token}`);
 export const sendVerificationEmail = (userInfo) =>
   API.post("/users/sendVerificationEmail", userInfo);
+
+export const getCart = () => API.get("/users/getCart");
+export const removeItemFromCart = (item) => API.post("/users/removeItemFromCart", item);
