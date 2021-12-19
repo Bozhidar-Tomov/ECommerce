@@ -27,8 +27,27 @@ const productSchema = new Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
   }
 );
+
+productSchema
+  .virtual("priceWhole")
+  .get(function () {
+    return this.price.toString().split(".")[0];
+  })
+  .set(function () {
+    price = this.price;
+  });
+
+productSchema
+  .virtual("priceDecimal")
+  .get(function () {
+    return this.price.toString().split(".")[1];
+  })
+  .set(function () {
+    price = this.price;
+  });
 
 const Product = model("Product", productSchema);
 

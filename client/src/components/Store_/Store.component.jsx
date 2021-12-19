@@ -50,7 +50,8 @@ function Store() {
           key={product?._id}
           title={product?.title}
           info={product?.shortInfo}
-          price={product?.price}
+          priceWhole={product?.priceWhole}
+          priceDecimal={product?.priceDecimal}
           _id={product?._id}
         />
       );

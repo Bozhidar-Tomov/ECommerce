@@ -282,7 +282,9 @@ function LandingPage() {
               </div>
               <div className='row g-2 mx-auto my-auto'>
                 <div className='col'>
-                  <Link className='btn btn btn-primary w-75' to={`/${user ? "store" : "auth"}`}>
+                  <Link
+                    className='btn btn btn-primary btn-lg w-75'
+                    to={`/${user ? "store" : "auth"}`}>
                     {user ? "Go to store" : "Sign In"}
                   </Link>
                 </div>

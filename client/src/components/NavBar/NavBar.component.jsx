@@ -58,6 +58,11 @@ function NavBar(props) {
           <Nav.Link as={Link} to='/store'>
             Store
           </Nav.Link>
+          {decodedToken && (
+            <Nav.Link as={Link} to='/dashboard'>
+              Dashboard
+            </Nav.Link>
+          )}
         </Nav>
         {location.pathname !== "/auth" &&
           (decodedToken ? (

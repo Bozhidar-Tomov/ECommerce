@@ -2,7 +2,7 @@ const Product = require("../models/product.model");
 
 const fetchAllProducts = async (req, res) => {
   await Product.find()
-    .then((products) => res.status(200).json(products))
+    .then((products) => res.status(200).send(products))
     .catch((err) => {
       res.status(400).json("Error: " + err);
       console.log(err);
@@ -11,7 +11,7 @@ const fetchAllProducts = async (req, res) => {
 
 const fetchOneProduct = async (req, res) => {
   await Product.findById(req.params.id)
-    .then((product) => res.json(product))
+    .then((product) => res.send(product))
     .catch((err) => {
       res.status(400).json("Error: " + err);
       console.log(err);

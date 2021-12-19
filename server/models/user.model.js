@@ -14,17 +14,16 @@ const userSchema = new Schema(
       min: [3, "Name must be between 3 and 40 characters"],
       max: [40, " Name must be between 3 and 40 characters"],
     },
-    name: {
-      type: String,
-      required: true,
-      min: [6, "Name must be between 3 and 40 characters"],
-      max: [81, " Name must be between 3 and 40 characters"],
-    },
-
     email: { type: String, required: true, max: 80 },
     country: { type: String, required: true, max: 3 },
     password: { type: String, required: true },
     cart: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "products",
+      },
+    ],
+    likedList: [
       {
         type: Schema.Types.ObjectId,
         ref: "products",
@@ -37,6 +36,10 @@ const userSchema = new Schema(
     validateBeforeSave: true,
   }
 );
+
+userSchema.virtual("name").get(function () {
+  return `${this.firstName} ${this.lastName}`;
+});
 
 const User = model("User", userSchema);
 

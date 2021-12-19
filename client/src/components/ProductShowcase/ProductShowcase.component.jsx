@@ -22,7 +22,7 @@ import Image from "react-bootstrap/Image";
 
 import Footer from "../Footer/Footer.component";
 
-import { Link } from "react-router-dom";
+import { RiHeartLine, RiHeartFill } from "react-icons/ri";
 
 const theme = sessionStorage.getItem("theme");
 const oppositeTheme = theme === "dark" ? "light" : "dark";
@@ -54,6 +54,8 @@ function getAdditionalInfo(info) {
 
 function ProductShowcase(props) {
   const [data, setData] = useState(null);
+  const [btnInfo] = useState("Add to cart");
+  const [isProductLiked, setIsProductLiked] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,6 +63,13 @@ function ProductShowcase(props) {
     };
     fetchData();
   }, [props.match.params.id]);
+
+  const likeProduct = async () => {
+    await api.handleLikedList({ productId: props.match.params.id }).then((data) => {
+      console.log(data);
+      setIsProductLiked((e) => !e);
+    });
+  };
 
   if (!data) return null;
   return (
@@ -119,23 +128,21 @@ function ProductShowcase(props) {
                 <Col>
                   <span className='fs-3'>Price: </span>
                   <span className='fs-2 text-primary'>
-                    {Math.trunc(data.price)}.
-                    <sup className='fw-light fs-5'>
-                      {Math.trunc((data.price - Math.floor(data.price)) * 100)}
-                    </sup>
+                    {data.priceWhole}.<sup className='fw-light fs-5'>{data.priceDecimal}</sup>
                     <span className='fs-4'> BGN</span>
                   </span>
                 </Col>
-                <Col className='col text-end'>
-                  <Button
-                    as={Link}
-                    to={"../checkout/" + props.match.params.id}
-                    variant='primary'
-                    size='lg'
-                    className='w-100'>
-                    Add to cart &nbsp;
+                <Col className='col'>
+                  <span className='clickable' onClick={likeProduct}>
+                    {isProductLiked ? (
+                      <RiHeartFill className='me-3' size={32} />
+                    ) : (
+                      <RiHeartLine className='me-3' size={32} />
+                    )}
+                  </span>
+                  <Button variant='primary' size='lg' className='w-75'>
+                    {btnInfo} &nbsp;
                     <svg
-                      xmlns='http://www.w3.org/2000/svg'
                       width='20'
                       height='20'
                       fill='currentColor'

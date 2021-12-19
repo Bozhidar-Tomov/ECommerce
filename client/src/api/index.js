@@ -4,9 +4,9 @@ const API = axios.create({ baseURL: "http://localhost:5000" });
 
 API.interceptors.request.use((req) => {
   if (localStorage.getItem("profile")) {
-    req.headers.authorization = `Bearer: ${JSON.parse(localStorage.getItem("profile")).token}`;
+    req.headers.authentication = `Bearer: ${JSON.parse(localStorage.getItem("profile")).token}`;
   } else if (sessionStorage.getItem("profile")) {
-    req.headers.authorization = `Bearer: ${JSON.parse(sessionStorage.getItem("profile")).token}`;
+    req.headers.authentication = `Bearer: ${JSON.parse(sessionStorage.getItem("profile")).token}`;
   }
   return req;
 });
@@ -15,7 +15,6 @@ export const fetchProductData = (productId = "") => API.get(`products/${productI
 
 export const signin = (formData) => API.post("/users/signin", formData);
 export const signup = (formData) => API.post("/users/signup", formData);
-export const deleteUser = (formData) => API.delete("/users/delete_user", formData);
 
 export const addPromoCode = (formData) => API.post("/promo-codes/add", formData);
 export const validatePromoCode = (formData) => API.post("/promo-codes/validate", formData);
@@ -25,5 +24,7 @@ export const verifyEmail = (token) => API.get(`/users/validate/${token}`);
 export const sendVerificationEmail = (userInfo) =>
   API.post("/users/sendVerificationEmail", userInfo);
 
-export const getCart = () => API.get("/users/getCart");
-export const removeItemFromCart = (item) => API.post("/users/removeItemFromCart", item);
+export const fetchUserData = () => API.get("/users/fetchUserData");
+export const removeItemFromCart = (item) => API.post("/users/removeItemFromData", item);
+export const handleLikedList = (item) => API.post("/users/addProductToLikedList", item);
+export const deleteUser = (item) => API.delete("/users/deleteUser", item);

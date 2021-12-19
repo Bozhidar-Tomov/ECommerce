@@ -37,10 +37,9 @@ function Product(props) {
           <Card.Title>
             <h5>{props.title}</h5>
           </Card.Title>
-          <Card.Text className='text-muted'>{getInfo(props?.info)}</Card.Text>
+          <Card.Text className='text-muted'>{getInfo(props.info)}</Card.Text>
           <Card.Text className='fs-3 fw-bold'>
-            {Math.trunc(props?.price)}.
-            <sup>{Math.trunc((props?.price - Math.floor(props?.price)) * 100)}</sup>{" "}
+            {props.priceWhole}.<sup>{props.priceDecimal}</sup>
             <span className='fs-5'> BGN</span>
           </Card.Text>
           <hr />
