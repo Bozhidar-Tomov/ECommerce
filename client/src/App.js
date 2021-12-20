@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./components/globalStyles";
@@ -36,21 +36,25 @@ function App() {
         <React.Suspense fallback=''>
           <LazyNavbar themeToggler={themeToggler} />
           <LazyBlob />
-          <Switch>
-            <Route exact path='/' component={LazyLandingPage} />
-            <Route exact path='/auth' component={LazyAuth} />
-            <Route exact path='/auth/verify' component={LazyVerify} />
-            <Route exact path='/auth/activationStatus/:token' component={LazyActivationStatus} />
-            <Route exact path='/store' component={LazyStore} />
-            <Route exact path='/product/:id' component={LazyProductShowcase} />
-            <Route exact path='/dashboard' component={LazyDashboard} />
+          <Routes>
+            <Route exact path='/' component={<LazyLandingPage />} />
+            <Route exact path='/auth' component={<LazyAuth />} />
+            <Route exact path='/auth/verify' component={<LazyVerify />} />
+            <Route
+              exact
+              path='/auth/activationStatus/:token'
+              component={<LazyActivationStatus />}
+            />
+            <Route exact path='/store' component={<LazyStore />} />
+            <Route exact path='/product/:id' component={<LazyProductShowcase />} />
+            <Route exact path='/dashboard' component={<LazyDashboard />} />
             <LazyProtectedRoute
               exact
               path='/checkout/:id'
               component={LazyCheckout}
               type='userAuthenticate'
             />
-          </Switch>
+          </Routes>
         </React.Suspense>
       </Router>
     </ThemeProvider>

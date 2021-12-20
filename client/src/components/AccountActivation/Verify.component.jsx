@@ -9,7 +9,7 @@ import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 
 import Button from "react-bootstrap/Button";
-import { Redirect } from "react-router";
+import { Navigate } from "react-router";
 
 import Image from "react-bootstrap/Image";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,7 +41,7 @@ function Verify() {
   }
 
   if (user) {
-    return <Redirect to='/' />;
+    return <Navigate to='/' />;
   }
 
   return (

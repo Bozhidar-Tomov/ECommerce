@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useHistory, Redirect } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 
 import "./styles.css";
 
@@ -82,7 +82,7 @@ function Auth() {
   const [userGeoId, setUserGeoId] = useState(sessionStorage.getItem("userGeoId"));
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const history = useHistory();
+  const history = useNavigate();
   const recaptchaRef = useRef();
 
   const googleSuccess = async (res) => {
@@ -144,7 +144,7 @@ function Auth() {
   }
 
   if (user) {
-    return <Redirect to='/' />;
+    return <Navigate to='/' />;
   }
 
   if (!userGeoId) return null;

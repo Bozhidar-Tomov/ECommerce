@@ -15,7 +15,7 @@ import Swal from "sweetalert2";
 import { LOGOUT } from "../../constants/actionTypes";
 
 import * as api from "../../api";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 
 import { FiTrash2 } from "react-icons/fi";
 import { RiDislikeLine } from "react-icons/ri";
@@ -29,7 +29,7 @@ function Dashboard() {
   const dispatch = useDispatch();
   const [userData, setUserData] = useState(null);
   const [current, setCurrent] = useState(0);
-  const history = useHistory();
+  const history = useNavigate();
   const theme = sessionStorage.getItem("theme");
   const oppositeTheme = theme === "dark" ? "light" : "dark";
   const [user] = useState(
@@ -124,8 +124,11 @@ function Dashboard() {
                 onClick={async () => {
                   const { value: email } = await Swal.fire({
                     title: "New Email Address",
+                    background: theme === "dark" ? "#303030" : "#fcfcfc",
+                    color: theme === "light" ? "#545454" : "#f3f3f3",
                     input: "email",
                     inputPlaceholder: "Enter your email address",
+                    confirmButtonText: "Update",
                   });
 
                   if (email) {

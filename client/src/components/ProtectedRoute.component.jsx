@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect, Route } from "react-router-dom";
+import { Navigate, Route } from "react-router-dom";
 import { AUTH_ERROR } from "../constants/actionTypes";
 
 import { useDispatch } from "react-redux";
@@ -37,7 +37,7 @@ function ProtectedRoute({ component: Component, ...props }) {
         if (res === true) return <Component {...props} />;
         else {
           dispatch({ type: AUTH_ERROR, payload: res[0] });
-          return <Redirect to={res[1]} />;
+          return <Navigate to={res[1]} />;
         }
       }}
     />
