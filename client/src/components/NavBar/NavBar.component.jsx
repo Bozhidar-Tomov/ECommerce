@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import * as actionType from "../../constants/actionTypes";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import Navbar from "react-bootstrap/Navbar";
 import Button from "react-bootstrap/Button";
@@ -10,11 +10,12 @@ import Badge from "react-bootstrap/Badge";
 import Nav from "react-bootstrap/Nav";
 import Avatar from "react-avatar";
 
+import { Link } from "react-router-dom";
+
 import decode from "jwt-decode";
 
-import "./styles.css";
-
-function NavBar() {
+function NavBar(props) {
+  const theme = sessionStorage.getItem("theme");
   const [user, setUser] = useState(
     JSON.parse(
       localStorage.getItem("profile")
@@ -23,20 +24,17 @@ function NavBar() {
     )
   );
   const dispatch = useDispatch();
-  const history = useHistory();
   const location = useLocation();
+  const decodedToken = user?.token ? decode(user.token) : null;
 
   const signOut = useCallback(() => {
     dispatch({ type: actionType.LOGOUT });
 
-    history.push("/auth");
     setUser(null);
-  }, [dispatch, history]);
+  }, [dispatch]);
 
   useEffect(() => {
-    const token = user?.token;
-    if (token) {
-      const decodedToken = decode(token);
+    if (decodedToken) {
       if (decodedToken.exp * 1000 < new Date().getTime()) signOut();
     }
     setUser(
@@ -46,49 +44,65 @@ function NavBar() {
           : sessionStorage.getItem("profile")
       )
     );
+    // eslint-disable-next-line
   }, [user?.token, location, signOut]);
 
   return (
-    <Navbar expand='md' className='pt-3 mx-5'>
-      <Container>
-        <Navbar.Brand href='/' className='fw-bold fst-normal text-primary'>
-          Online Partner Retailer
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls='navbarScroll' />
-        <Navbar.Collapse id='navbarScroll'>
-          <Nav className='me-auto my-2 my-lg-0' navbarScroll>
-            <Nav.Link href='/store'>Store</Nav.Link>
-          </Nav>
-
-          {user?.result ? (
+    <Navbar bg={theme} variant={theme} expand='md' className='pt-3 mx-5'>
+      <Navbar.Brand href='/' className='fw-bold fst-normal text-primary'>
+        Online Partner Retailer
+      </Navbar.Brand>
+      <Navbar.Toggle aria-controls='navbarScroll' />
+      <Navbar.Collapse id='navbarScroll'>
+        <Nav className='me-auto my-2 my-lg-0' navbarScroll>
+          <Nav.Link as={Link} to='/store'>
+            Store
+          </Nav.Link>
+          {decodedToken && (
+            <Nav.Link as={Link} to='/dashboard'>
+              Dashboard
+            </Nav.Link>
+          )}
+        </Nav>
+        {location.pathname !== "/auth" &&
+          (decodedToken ? (
             <Nav>
               <Container>
                 <Avatar
-                  name={user?.result.name}
+                  name={decodedToken.name}
                   round={true}
-                  src={user?.result.imageUrl}
+                  src={decodedToken.imageUrl}
                   size='36'
                 />
-                <span className='fs-6'> {user?.result.name}</span>
-                {!user?.result.isAccountValidated && (
+                <span className='fs-6'> {decodedToken.name}</span>
+                {!decodedToken.isAccountValidated && (
                   <Badge pill className='ms-3 text-dark' bg='warning'>
                     Not verified
                   </Badge>
                 )}
-                <Button as='a' href='/' variant='outline-secondary ms-4' onClick={signOut}>
+                <Button as={Link} to='/' variant='outline-secondary ms-4' onClick={signOut}>
                   Sign Out
                 </Button>
               </Container>
             </Nav>
           ) : (
             <Nav>
-              <Button as='a' href='/auth' variant='outline-secondary'>
+              <Button as={Link} to='/auth' variant='outline-secondary'>
                 Sign In
               </Button>
             </Nav>
-          )}
-        </Navbar.Collapse>
-      </Container>
+          ))}
+      </Navbar.Collapse>
+      <form className='ms-4 form'>
+        <input
+          onClick={props.themeToggler}
+          id='dark-mode'
+          className='toggle'
+          type='checkbox'
+          role='switch'
+        />
+        <div className='curtain'></div>
+      </form>
     </Navbar>
   );
 }

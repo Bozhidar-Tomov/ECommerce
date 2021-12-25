@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useHistory } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 
 import "./styles.css";
 
@@ -33,6 +33,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { signup, signin } from "../../actions/auth";
 
 import ReCAPTCHA from "react-google-recaptcha";
+import background from "../../images/auth-background.svg";
 
 const schemaSignUp = yup.object().shape({
   firstName: yup
@@ -68,29 +69,34 @@ const schemaSignIn = yup.object().shape({
 
 function Auth() {
   console.log("rendering");
+  const user = JSON.parse(
+    localStorage.getItem("profile")
+      ? localStorage.getItem("profile")
+      : sessionStorage.getItem("profile")
+  );
+  const theme = sessionStorage.getItem("theme");
+  const oppositeTheme = theme === "dark" ? "light" : "dark";
   const error = useSelector((state) => state.auth.errors);
-  useSelector((state) => console.log(state));
-
   const [isSignUp, setSignUp] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [userGeoId, setUserGeoId] = useState(sessionStorage.getItem("userGeoId"));
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const recaptchaRef = useRef();
 
   const googleSuccess = async (res) => {
     const result = res.profileObj;
     const googleToken = res.tokenId;
-    console.log(result);
 
     const formData = {
       firstName: result.givenName,
       lastName: result.familyName,
       email: result.email,
-      country: userGeoId[0],
+      country: userGeoId[1],
       password: result.googleId,
       confirmPassword: result.googleId,
+      //FIXME: cannot get and send rememberMe
       rememberMe: false,
     };
 
@@ -98,9 +104,9 @@ function Auth() {
     recaptchaRef.current.reset();
 
     if (isSignUp) {
-      dispatch(signup({ ...formData, recaptchaToken, googleToken, ip: userGeoId[1] }, history));
+      dispatch(signup({ ...formData, recaptchaToken, googleToken, ip: userGeoId[1] }, navigate));
     } else {
-      dispatch(signin({ ...formData, recaptchaToken, googleToken, ip: userGeoId[1] }, history));
+      dispatch(signin({ ...formData, recaptchaToken, googleToken, ip: userGeoId[1] }, navigate));
     }
   };
 
@@ -108,23 +114,19 @@ function Auth() {
     console.log("google unsuccessful", err);
   };
 
-  if (!userGeoId) {
+  useEffect(() => {
     async function getLocation() {
-      await fetch("https://ipapi.co/json/")
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (data) {
-          sessionStorage.setItem("userGeoId", [data.country_name, data.ip]);
-          setUserGeoId([data.country_name, data.ip]);
-        });
+      if (!userGeoId) {
+        await fetch("https://ipapi.co/json/")
+          .then((response) => response.json())
+          .then((data) => {
+            sessionStorage.setItem("userGeoId", [data.country_name, data.ip]);
+            setUserGeoId([data.country_name, data.ip]);
+          });
+      }
     }
     getLocation();
-  }
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, [error]);
+  }, [error, userGeoId]);
 
   function getCountries() {
     return Object.keys(countries?.countries).map((code) => {
@@ -140,107 +142,156 @@ function Auth() {
     });
   }
 
+  if (user) {
+    return <Navigate to='/' />;
+  }
+
+  if (!userGeoId) return null;
+
   return (
-    <Container fluid='md' className='my-5'>
+    <React.Fragment>
       <Alert
         role='alert'
-        variant='danger'
+        variant={`${theme === "dark" ? "dark" : "danger"}`}
         className='alert_ fs-5 d-flex align-items-center justify-content-center'
         show={error}
         dismissible
         onClose={() => dispatch({ type: CLEAR_ERROR, payload: null })}>
-        <AiOutlineExclamationCircle size='30' />
-
-        <span>&nbsp;&nbsp;&nbsp;{error}</span>
+        <span>
+          <AiOutlineExclamationCircle size='30' />
+          &nbsp;&nbsp;&nbsp;{error}
+        </span>
       </Alert>
 
-      <Card className=' shadow-lg border border-primary border-2 mt-2 '>
-        <Card.Title className='text-primary text-center my-4'>
-          <h3>{isSignUp ? "Sign Up" : "Sign In"}</h3>
-        </Card.Title>
-        <Card.Body>
-          <Formik
-            validationSchema={isSignUp ? schemaSignUp : schemaSignIn}
-            onSubmit={async (formData) => {
-              const recaptchaToken = await recaptchaRef.current.executeAsync();
-              recaptchaRef.current.reset();
+      <ReCAPTCHA
+        sitekey={process.env.REACT_APP_SITE_KEY}
+        size='invisible'
+        badge='bottomright'
+        ref={recaptchaRef}
+        theme={theme}
+      />
 
-              dispatch({ type: CLEAR_ERROR });
-              setIsLoading(true);
+      <div className='my-5 mx-md-5 p-2 d-flex justify-content-md-start justify-content-center align-items-center'>
+        <Card
+          className='n shadow-lg border border-primary border-2'
+          bg={theme}
+          text={oppositeTheme}>
+          <Card.Title className='text-primary text-center my-4'>
+            <h3>{isSignUp ? "Sign Up" : "Sign In"}</h3>
+          </Card.Title>
+          <Card.Body>
+            <Formik
+              validationSchema={isSignUp ? schemaSignUp : schemaSignIn}
+              onSubmit={async (formData) => {
+                const recaptchaToken = await recaptchaRef.current.executeAsync();
+                recaptchaRef.current.reset();
 
-              if (isSignUp) {
-                dispatch(signup({ ...formData, recaptchaToken, ip: userGeoId[1] }, history));
-              } else {
-                dispatch(signin({ ...formData, recaptchaToken, ip: userGeoId[1] }, history));
-              }
-            }}
-            initialValues={{
-              firstName: "rrr",
-              lastName: "ttt",
-              email: "w@w.d",
-              country: "r",
-              password: "asdfghas",
-              confirmPassword: "asdfghas",
-              rememberMe: false,
-            }}>
-            {({ handleSubmit, handleChange, handleReset, values, touched, errors }) => (
-              <Form noValidate onSubmit={handleSubmit} className='form-outline form-white'>
-                <Container fluid='md'>
-                  {isSignUp && (
-                    <Row>
-                      <Form.Group as={Col} md={6} className='mb-3'>
-                        <Form.Label>
-                          First Name <span className='text-danger'>*</span>
-                        </Form.Label>
-                        <InputGroup hasValidation className='mb-2'>
-                          <InputGroup.Text>
-                            <BsPersonLinesFill />
-                          </InputGroup.Text>
-                          <Form.Control
-                            name='firstName'
-                            type='text'
-                            value={values.firstName}
-                            onChange={handleChange}
-                            isInvalid={touched.lastName && !!errors.firstName}
-                            placeholder='John'
-                          />
-                          <Form.Control.Feedback type='invalid'>
-                            {errors.firstName}
-                          </Form.Control.Feedback>
-                        </InputGroup>
-                      </Form.Group>
+                setIsLoading(true);
+                dispatch({ type: CLEAR_ERROR });
 
-                      <Form.Group as={Col} md={6} className='mb-3' controlId='last-name'>
-                        <Form.Label>
-                          Last Name <span className='text-danger '>*</span>
-                        </Form.Label>
-                        <InputGroup hasValidation className='mb-2'>
-                          <InputGroup.Text>
-                            <BsPersonLinesFill />
-                          </InputGroup.Text>
-                          <Form.Control
-                            name='lastName'
-                            type='text'
-                            value={values.lastName}
-                            onChange={handleChange}
-                            isInvalid={touched.lastName && !!errors.lastName}
-                            placeholder='Smith'
-                          />
-                          <Form.Control.Feedback type='invalid'>
-                            {errors.lastName}
-                          </Form.Control.Feedback>
-                        </InputGroup>
-                      </Form.Group>
-                    </Row>
-                  )}
-                  <Row>
-                    <Form.Group as={Col} md={6} className='mb-3' controlId='email-address'>
+                if (isSignUp) {
+                  dispatch(signup({ ...formData, recaptchaToken, ip: userGeoId[1] }, navigate));
+                } else {
+                  dispatch(signin({ ...formData, recaptchaToken, ip: userGeoId[1] }, navigate));
+                }
+              }}
+              initialValues={{
+                firstName: "rrr",
+                lastName: "ttt",
+                email: "w@w.d",
+                country: "r",
+                password: "asdfghas",
+                confirmPassword: "asdfghas",
+                rememberMe: false,
+              }}>
+              {({ handleSubmit, handleChange, handleReset, values, touched, errors }) => (
+                <Form noValidate onSubmit={handleSubmit}>
+                  <Container fluid='md'>
+                    {isSignUp && (
+                      <>
+                        <p className='lead fs-2 '>Personal Info</p>
+                        <Form.Group as={Col} className='mb-3 ps-4'>
+                          <Form.Label>
+                            First Name <span className='text-danger'>*</span>
+                          </Form.Label>
+                          <InputGroup hasValidation className='mb-2'>
+                            <InputGroup.Text>
+                              <BsPersonLinesFill />
+                            </InputGroup.Text>
+                            <Form.Control
+                              className={`bg-${theme} text-${oppositeTheme}`}
+                              name='firstName'
+                              type='text'
+                              value={values.firstName}
+                              onChange={handleChange}
+                              isInvalid={touched.lastName && !!errors.firstName}
+                              placeholder='John'
+                            />
+                            <Form.Control.Feedback type='invalid'>
+                              {errors.firstName}
+                            </Form.Control.Feedback>
+                          </InputGroup>
+                        </Form.Group>
+
+                        <Form.Group as={Col} className='mb-3 ps-4' controlId='last-name'>
+                          <Form.Label>
+                            Last Name <span className='text-danger '>*</span>
+                          </Form.Label>
+                          <InputGroup hasValidation className='mb-2'>
+                            <InputGroup.Text>
+                              <BsPersonLinesFill />
+                            </InputGroup.Text>
+                            <Form.Control
+                              className={`bg-${theme} text-${oppositeTheme}`}
+                              name='lastName'
+                              type='text'
+                              value={values.lastName}
+                              onChange={handleChange}
+                              isInvalid={touched.lastName && !!errors.lastName}
+                              placeholder='Smith'
+                            />
+                            <Form.Control.Feedback type='invalid'>
+                              {errors.lastName}
+                            </Form.Control.Feedback>
+                          </InputGroup>
+                        </Form.Group>
+                      </>
+                    )}
+
+                    {isSignUp && (
+                      <>
+                        <Form.Group as={Col} className='mb-3 ps-4' controlId='Country'>
+                          <Form.Label>
+                            Country <span className='text-danger '>*</span>
+                          </Form.Label>
+                          <InputGroup hasValidation className='mb-2 '>
+                            <InputGroup.Text>
+                              <FaMapMarkerAlt />
+                            </InputGroup.Text>
+                            <Form.Select
+                              className={`bg-${theme} text-${oppositeTheme}`}
+                              defaultValue={userGeoId[0]}
+                              onChange={handleChange}>
+                              {getCountries()}
+                            </Form.Select>
+                          </InputGroup>
+                        </Form.Group>
+                        <hr className='mt-5' />
+                        <p className='lead fs-2 mb-3'>Account Info</p>
+                      </>
+                    )}
+
+                    <Form.Group
+                      as={Col}
+                      className={`mb-3 ${isSignUp ? "ps-4" : ""}`}
+                      controlId='email-address'>
                       <Form.Label>
                         Email <span className='text-danger '>*</span>
                       </Form.Label>
                       <InputGroup hasValidation className='mb-2'>
                         <InputGroup.Text className='fw-bold'>@</InputGroup.Text>
                         <Form.Control
+                          className={`bg-${theme} text-${oppositeTheme}`}
                           name='email'
                           type='email'
                           value={values.email}
@@ -252,24 +303,10 @@ function Auth() {
                       </InputGroup>
                     </Form.Group>
 
-                    {isSignUp && (
-                      <Form.Group as={Col} md={6} className='mb-3 ' controlId='Country'>
-                        <Form.Label>
-                          Country <span className='text-danger '>*</span>
-                        </Form.Label>
-                        <InputGroup hasValidation className='mb-2 '>
-                          <InputGroup.Text>
-                            <FaMapMarkerAlt />
-                          </InputGroup.Text>
-                          <Form.Select defaultValue={userGeoId[0]} onChange={handleChange}>
-                            {getCountries()}
-                          </Form.Select>
-                        </InputGroup>
-                      </Form.Group>
-                    )}
-                  </Row>
-                  <Row>
-                    <Form.Group as={Col} md={6} className='mb-3' controlId='password'>
+                    <Form.Group
+                      as={Col}
+                      className={`mb-3 ${isSignUp ? "ps-4" : ""}`}
+                      controlId='password'>
                       <Form.Label>
                         Password <span className='text-danger '>*</span>
                       </Form.Label>
@@ -278,6 +315,7 @@ function Auth() {
                           <CgPassword />
                         </InputGroup.Text>
                         <Form.Control
+                          className={`bg-${theme} text-${oppositeTheme}`}
                           name='password'
                           type='password'
                           value={values.password}
@@ -291,7 +329,7 @@ function Auth() {
                       </InputGroup>
                     </Form.Group>
                     {isSignUp && (
-                      <Form.Group as={Col} md={6} className='mb-3' controlId='confirm-password'>
+                      <Form.Group as={Col} className='mb-3 ps-4' controlId='confirm-password'>
                         <Form.Label>
                           Confirm Password <span className='text-danger '>*</span>
                         </Form.Label>
@@ -300,6 +338,7 @@ function Auth() {
                             <CgPassword />
                           </InputGroup.Text>
                           <Form.Control
+                            className={`bg-${theme} text-${oppositeTheme}`}
                             name='confirmPassword'
                             type={showPass ? "text" : "password"}
                             value={values.confirmPassword}
@@ -318,30 +357,26 @@ function Auth() {
                         </InputGroup>
                       </Form.Group>
                     )}
-                  </Row>
-                  {!isSignUp && (
-                    <Row className=' mt-3'>
-                      <Col md={2}>
-                        <Form.Check
-                          name='rememberMe'
-                          className='ms-3'
-                          type='checkbox'
-                          label='Remember me'
-                          onChange={handleChange}
-                        />
-                      </Col>
-                    </Row>
-                  )}
 
-                  <Row>
-                    <Col md={6} className='text-center mt-2'>
-                      <ReCAPTCHA
-                        sitekey={process.env.REACT_APP_SITE_KEY}
-                        size='invisible'
-                        badge='bottomright'
-                        ref={recaptchaRef}
-                      />
-                      <Button className='w-100 my-1' type='submit' disabled={isLoading}>
+                    {!isSignUp && (
+                      <Row className=' mt-3'>
+                        <Col>
+                          <Form.Label hidden={true}>Remember me</Form.Label>
+                          <Form.Check
+                            name='rememberMe'
+                            className='m-2'
+                            type='checkbox'
+                            label='Remember me'
+                            onChange={handleChange}
+                          />
+                        </Col>
+                      </Row>
+                    )}
+
+                    <hr className='my-5' />
+
+                    <Row className='mt-2'>
+                      <Button type='submit' disabled={isLoading}>
                         {!isLoading ? (
                           isSignUp ? (
                             "Sign Up"
@@ -361,13 +396,18 @@ function Auth() {
                           </React.Fragment>
                         )}
                       </Button>
+                      <span className='fs-6 text-center'>OR</span>
                       <GoogleLogin
                         clientId={process.env.REACT_APP_GOOGLE_ID}
                         render={(renderProps) => (
                           <Button
+                            type='submit'
                             variant='outline-primary'
-                            className='w-100 my-1'
+                            className='my-2'
                             onClick={renderProps.onClick}
+                            onClickCapture={() => {
+                              dispatch({ type: CLEAR_ERROR });
+                            }}
                             disabled={renderProps.disabled || isLoading}>
                             <ImGoogle />
                             <span>{isSignUp ? " Sign Up " : " Sign In "}with Google</span>
@@ -377,11 +417,10 @@ function Auth() {
                         onFailure={googleFailure}
                         cookiePolicy='single_host_origin'
                       />
-                    </Col>
-
-                    <Col md={{ span: 4, offset: 2 }} className='text-center mt-2'>
+                    </Row>
+                    <Row className='mt-2'>
                       <button
-                        className='switch-btn w-100 my-4 text-muted text-end'
+                        className='switch-btn w-100 my-2 text-muted text-end'
                         type='button'
                         onClick={() => {
                           setSignUp((e) => !e);
@@ -392,15 +431,16 @@ function Auth() {
                           ? "ALREADY HAVE AN ACCOUNT? SIGN IN"
                           : "DON'T HAVE AN ACCOUNT? SIGN UP"}
                       </button>
-                    </Col>
-                  </Row>
-                </Container>
-              </Form>
-            )}
-          </Formik>
-        </Card.Body>
-      </Card>
-    </Container>
+                    </Row>
+                  </Container>
+                </Form>
+              )}
+            </Formik>
+          </Card.Body>
+        </Card>
+        <img className='r' src={background} alt='background' aria-hidden='true' />
+      </div>
+    </React.Fragment>
   );
 }
 

@@ -1,8 +1,11 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
+const Product = require("../models/product.model");
+const mongoose = require("mongoose");
 const axios = require("axios");
 const { sendConfirmationEmail } = require("../utils/verificationEmail");
+const { CART, LIKED_LIST } = require("../constants/actionTypes");
 
 require("dotenv").config();
 
@@ -38,6 +41,7 @@ const signin = async (req, res) => {
 
     const token = jwt.sign(
       {
+        name: existingUser.name,
         email: existingUser.email,
         id: existingUser._id,
         isAccountValidated: existingUser.isAccountValidated,
@@ -49,11 +53,6 @@ const signin = async (req, res) => {
     );
 
     return res.status(200).json({
-      result: {
-        name: existingUser.name,
-        email: existingUser.email,
-        userID: existingUser._id,
-      },
       token,
       rememberMe,
     });
@@ -86,7 +85,6 @@ const signup = async (req, res) => {
     const result = await User.create({
       firstName,
       lastName,
-      name: `${firstName} ${lastName}`,
       email,
       country,
       password: hashedPassword,
@@ -137,7 +135,7 @@ const validate = async (req, res) => {
         });
       else {
         return res.status(409).json({
-          title: "Your email has been already verified!",
+          title: "Your email has already been verified!",
           description: "You can now sign in and start using our services",
         });
       }
@@ -153,6 +151,139 @@ const validate = async (req, res) => {
     });
   }
 };
+
+const fetchUserData = async (req, res) => {
+  await User.findById(req.userId)
+    .then(async (data) => {
+      let info = [];
+      await Product.find({ _id: { $in: data.cart } })
+        .then((data) => {
+          let cart = [];
+          for (item of data) {
+            cart.push({ name: item.name, price: item.price, id: item._id });
+          }
+          info.push(cart);
+        })
+        .catch((err) => {
+          res.status(400).send(err);
+          console.log(err);
+        });
+
+      await Product.find({ _id: { $in: data.likedList } })
+        .then((data) => {
+          let likedList = [];
+          for (item of data) {
+            likedList.push({ name: item.name, price: item.price, id: item._id });
+          }
+          info.push(likedList);
+        })
+        .catch((err) => {
+          res.status(400).send(err);
+          console.log(err);
+        });
+      info.push([
+        data.country,
+        data.email,
+        data.createdAt.toString().substr(4, 17),
+        data.isAccountValidated,
+      ]);
+      res.status(200).send(info);
+    })
+    .catch((error) => {
+      console.log(error);
+      return res.status(500).json({ message: "Internal server error" });
+    });
+};
+const removeItemFromUserData = async (req, res) => {
+  const { item, field } = req.body;
+
+  if ((field === CART) ^ (field === LIKED_LIST)) {
+    await User.findById(req.userId)
+      .then(async (data) => {
+        const index = data[field].indexOf(item);
+        if (index === -1) return res.status(400).send("index error");
+
+        if (data[field].length === 0) return res.status(204).send();
+
+        data[field].splice(index, 1);
+
+        await User.findByIdAndUpdate(req.userId, { [field]: data[field] })
+          .then(res.status(200).send("removed"))
+          .catch((error) => {
+            console.log(error);
+            return res.status(500).json({ message: "Internal server error" });
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+        return res.status(500).json({ message: "Internal server error" });
+      });
+  } else {
+    console.log("not executed");
+  }
+};
+
+const addProductToLikedList = async (req, res) => {
+  const { productId } = req.body;
+
+  await User.findById(req.userId)
+    .then(async (data) => {
+      const lst = data.likedList;
+      if (lst.includes(productId)) {
+        const index = lst.indexOf(productId);
+        if (index > -1) {
+          lst.splice(index, 1);
+        }
+      } else lst.push(mongoose.Types.ObjectId(productId));
+
+      await User.findByIdAndUpdate(req.userId, { likedList: lst })
+        .then(res.status(200).send("done liking"))
+        .catch((error) => {
+          console.log(error.message);
+          return res.status(500).json({ message: "Internal server error" });
+        });
+    })
+    .catch((error) => {
+      console.log(error.message);
+      return res.status(500).json({ message: "Internal server error" });
+    });
+};
+
+const addProductToCart = async (req, res) => {
+  const { productId } = req.body;
+
+  await User.findById(req.userId)
+    .then(async (data) => {
+      const lst = data.cart;
+      if (lst.includes(productId)) {
+        const index = lst.indexOf(productId);
+        if (index > -1) {
+          lst.splice(index, 1);
+        }
+      } else lst.push(mongoose.Types.ObjectId(productId));
+
+      await User.findByIdAndUpdate(req.userId, { cart: lst })
+        .then(res.status(200).send("add to cart done"))
+        .catch((error) => {
+          console.log(error.message);
+          return res.status(500).json({ message: "Internal server error" });
+        });
+    })
+    .catch((error) => {
+      console.log(error.message);
+      return res.status(500).json({ message: "Internal server error" });
+    });
+};
+
+const deleteUser = async (req, res) => {
+  await User.findByIdAndDelete(req.userId)
+    .then(res.status(200).send("deleted"))
+    .catch((error) => {
+      console.log(error.message);
+      return res.status(500).json({ message: "Internal server error" });
+    });
+};
+
 // try {
 //   let {id} = jwt.verify(req.params.token, process.env.SECRET_KEY);
 // } catch (error) {
@@ -166,3 +297,9 @@ exports.signin = signin;
 exports.signup = signup;
 exports.sendVerificationEmail = sendVerificationEmail;
 exports.validate = validate;
+
+exports.fetchUserData = fetchUserData;
+exports.removeItemFromUserData = removeItemFromUserData;
+exports.addProductToLikedList = addProductToLikedList;
+exports.addProductToCart = addProductToCart;
+exports.deleteUser = deleteUser;

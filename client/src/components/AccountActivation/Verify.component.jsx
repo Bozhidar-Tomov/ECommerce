@@ -9,6 +9,7 @@ import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 
 import Button from "react-bootstrap/Button";
+import { Navigate } from "react-router";
 
 import Image from "react-bootstrap/Image";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,23 +17,41 @@ import { useDispatch, useSelector } from "react-redux";
 import { sendVerificationEmail } from "../../actions/auth";
 
 function Verify() {
+  let count = 0;
+  const user = JSON.parse(
+    localStorage.getItem("profile")
+      ? localStorage.getItem("profile")
+      : sessionStorage.getItem("profile")
+  );
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.auth.userInfo);
+  const theme = sessionStorage.getItem("theme");
+  const oppositeTheme = theme === "dark" ? "light" : "dark";
 
   useEffect(() => {
     console.log("run");
     dispatch(sendVerificationEmail(userInfo));
   });
-  //TODO: LIMIT number of resend-s
   function resendEmail() {
-    console.log("resent!");
-    dispatch(sendVerificationEmail(userInfo));
+    if (count < 5) {
+      console.log("resent!");
+      dispatch(sendVerificationEmail(userInfo));
+      count++;
+    }
+  }
+
+  if (user) {
+    return <Navigate to='/' />;
   }
 
   return (
     <Container fluid='sm' className='my-5 px-4'>
       <Row className='justify-content-center text-center my-4'>
-        <Card className='shadow-lg border border-primary border-2 p-4' style={{ width: "50rem" }}>
+        <Card
+          bg={theme}
+          text={oppositeTheme}
+          className='shadow-lg border border-primary border-2 p-4'
+          style={{ width: "50rem" }}>
           <Row className='justify-content-center text-center'>
             <Image variant='top' src={emailCheck} style={{ width: "190px", height: "190px" }} />
           </Row>

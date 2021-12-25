@@ -7,3 +7,6 @@ export const CLEAR_ERROR = "CLEAR_ERROR";
 
 export const PROMO_CODE_ERROR = "PROMO_CODE_ERROR";
 export const PROMO_CODE_SUCCESS = "PROMO_CODE_SUCCESS";
+
+export const CART = "cart";
+export const LIKED_LIST = "likedList";

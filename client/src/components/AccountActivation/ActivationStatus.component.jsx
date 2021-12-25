@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router";
 import OK from "../../images/check.svg";
 
 import Container from "react-bootstrap/Container";
@@ -12,13 +13,17 @@ import * as api from "../../api/index";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 
-function ActivationStatus(props) {
+function ActivationStatus() {
   console.log("rendering");
   const [state, setState] = useState(null);
+  const theme = sessionStorage.getItem("theme");
+  const oppositeTheme = theme === "dark" ? "light" : "dark";
+  const params = useParams();
+
   useEffect(() => {
     async function verifyEmail() {
       await api
-        .verifyEmail(props.match.params.token)
+        .verifyEmail(params.token)
         .then((res) => {
           setState(() => ({ response: res.data, status: res.status }));
         })
@@ -27,14 +32,16 @@ function ActivationStatus(props) {
         });
     }
     verifyEmail();
-  }, [props.match.params.token]);
+  }, [params.token]);
 
-  console.log(state);
-  if (!state) return <div>Loading ...</div>;
+  if (!state) return <></>;
+
   return (
     <Container fluid='sm' className='my-5 px-4'>
       <Row className='justify-content-center text-center my-4'>
         <Card
+          bg={theme}
+          text={oppositeTheme}
           className={`shadow-lg border border-${
             state.status === 200 ? "success" : state.status === 409 ? "secondary" : "danger"
           } border-2 p-4`}
@@ -72,5 +79,3 @@ function ActivationStatus(props) {
 }
 
 export default ActivationStatus;
-
-//hello world!

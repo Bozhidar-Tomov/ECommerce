@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect, Route } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { AUTH_ERROR } from "../constants/actionTypes";
 
 import { useDispatch } from "react-redux";
@@ -15,33 +15,26 @@ const isAuthenticated = () => {
 
   if (user?.token) {
     const decodedToken = decode(user.token);
-    console.log(decodedToken);
     if (decodedToken.exp * 1000 > new Date().getTime()) {
-      if (!decodedToken.isAccountValidated)
-        return "Your account is not verified! Verify your account in order to proceed.";
+      if (!decodedToken.isAccountValidated && window.location.pathname !== "/dashboard")
+        return ["Your account is not verified! Verify your account in order to proceed.", "/"];
       return true;
     }
-    return "Your session has expired. Sign in again.";
+    return ["Your session has expired. Sign in again.", "/auth"];
   }
-  return "You have to sign in in order to proceed.";
+  return ["You have to sign in in order to proceed.", "/auth"];
 };
 
-function ProtectedRoute({ component: Component, ...props }) {
-  isAuthenticated();
+function ProtectedRoute({ children }) {
   const dispatch = useDispatch();
-  return (
-    <Route
-      {...props}
-      render={(props) => {
-        const res = isAuthenticated();
-        if (res === true) return <Component {...props} />;
-        else {
-          dispatch({ type: AUTH_ERROR, payload: res });
-          return <Redirect to='/auth' />;
-        }
-      }}
-    />
-  );
+  const auth = isAuthenticated();
+
+  if (auth === true) {
+    return children;
+  } else {
+    dispatch({ type: AUTH_ERROR, payload: auth[0] });
+    return <Navigate to={auth[1]} />;
+  }
 }
 
 export default ProtectedRoute;
