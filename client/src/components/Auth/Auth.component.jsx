@@ -82,7 +82,7 @@ function Auth() {
   const [userGeoId, setUserGeoId] = useState(sessionStorage.getItem("userGeoId"));
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
-  const history = useNavigate();
+  const navigate = useNavigate();
   const recaptchaRef = useRef();
 
   const googleSuccess = async (res) => {
@@ -104,9 +104,9 @@ function Auth() {
     recaptchaRef.current.reset();
 
     if (isSignUp) {
-      dispatch(signup({ ...formData, recaptchaToken, googleToken, ip: userGeoId[1] }, history));
+      dispatch(signup({ ...formData, recaptchaToken, googleToken, ip: userGeoId[1] }, navigate));
     } else {
-      dispatch(signin({ ...formData, recaptchaToken, googleToken, ip: userGeoId[1] }, history));
+      dispatch(signin({ ...formData, recaptchaToken, googleToken, ip: userGeoId[1] }, navigate));
     }
   };
 
@@ -125,7 +125,6 @@ function Auth() {
           });
       }
     }
-    setIsLoading(false);
     getLocation();
   }, [error, userGeoId]);
 
@@ -187,13 +186,13 @@ function Auth() {
                 const recaptchaToken = await recaptchaRef.current.executeAsync();
                 recaptchaRef.current.reset();
 
-                dispatch({ type: CLEAR_ERROR });
                 setIsLoading(true);
+                dispatch({ type: CLEAR_ERROR });
 
                 if (isSignUp) {
-                  dispatch(signup({ ...formData, recaptchaToken, ip: userGeoId[1] }, history));
+                  dispatch(signup({ ...formData, recaptchaToken, ip: userGeoId[1] }, navigate));
                 } else {
-                  dispatch(signin({ ...formData, recaptchaToken, ip: userGeoId[1] }, history));
+                  dispatch(signin({ ...formData, recaptchaToken, ip: userGeoId[1] }, navigate));
                 }
               }}
               initialValues={{

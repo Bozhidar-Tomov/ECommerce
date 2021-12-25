@@ -5,6 +5,7 @@ const Product = require("../models/product.model");
 const mongoose = require("mongoose");
 const axios = require("axios");
 const { sendConfirmationEmail } = require("../utils/verificationEmail");
+const { CART, LIKED_LIST } = require("../constants/actionTypes");
 
 require("dotenv").config();
 
@@ -193,33 +194,36 @@ const fetchUserData = async (req, res) => {
       return res.status(500).json({ message: "Internal server error" });
     });
 };
-const removeItemFromCart = async (req, res) => {
-  const { item } = req.body;
+const removeItemFromUserData = async (req, res) => {
+  const { item, field } = req.body;
 
-  await User.findById(req.userId)
-    .then(async (data) => {
-      const index = data.likedList.indexOf(item);
-      if (index === -1) return res.status(400).send("index error");
+  if ((field === CART) ^ (field === LIKED_LIST)) {
+    await User.findById(req.userId)
+      .then(async (data) => {
+        const index = data[field].indexOf(item);
+        if (index === -1) return res.status(400).send("index error");
 
-      if (data.likedList.length === 0) return res.status(204).send();
+        if (data[field].length === 0) return res.status(204).send();
 
-      data.likedList.splice(index, 1);
+        data[field].splice(index, 1);
 
-      await User.findByIdAndUpdate(req.userId, { likedList: data.likedList })
-        .then(res.status(200).send("removed"))
-        .catch((error) => {
-          console.log(error);
-          return res.status(500).json({ message: "Internal server error" });
-        });
-    })
-    .catch((error) => {
-      console.log(error);
-      return res.status(500).json({ message: "Internal server error" });
-    });
+        await User.findByIdAndUpdate(req.userId, { [field]: data[field] })
+          .then(res.status(200).send("removed"))
+          .catch((error) => {
+            console.log(error);
+            return res.status(500).json({ message: "Internal server error" });
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+        return res.status(500).json({ message: "Internal server error" });
+      });
+  } else {
+    console.log("not executed");
+  }
 };
 
 const addProductToLikedList = async (req, res) => {
-  console.log(req.body);
   const { productId } = req.body;
 
   await User.findById(req.userId)
@@ -245,8 +249,39 @@ const addProductToLikedList = async (req, res) => {
     });
 };
 
+const addProductToCart = async (req, res) => {
+  const { productId } = req.body;
+
+  await User.findById(req.userId)
+    .then(async (data) => {
+      const lst = data.cart;
+      if (lst.includes(productId)) {
+        const index = lst.indexOf(productId);
+        if (index > -1) {
+          lst.splice(index, 1);
+        }
+      } else lst.push(mongoose.Types.ObjectId(productId));
+
+      await User.findByIdAndUpdate(req.userId, { cart: lst })
+        .then(res.status(200).send("add to cart done"))
+        .catch((error) => {
+          console.log(error.message);
+          return res.status(500).json({ message: "Internal server error" });
+        });
+    })
+    .catch((error) => {
+      console.log(error.message);
+      return res.status(500).json({ message: "Internal server error" });
+    });
+};
+
 const deleteUser = async (req, res) => {
-  await User.findByIdAndDelete(req.userId).then(res.status(200).send("deleted"));
+  await User.findByIdAndDelete(req.userId)
+    .then(res.status(200).send("deleted"))
+    .catch((error) => {
+      console.log(error.message);
+      return res.status(500).json({ message: "Internal server error" });
+    });
 };
 
 // try {
@@ -264,6 +299,7 @@ exports.sendVerificationEmail = sendVerificationEmail;
 exports.validate = validate;
 
 exports.fetchUserData = fetchUserData;
-exports.removeItemFromCart = removeItemFromCart;
+exports.removeItemFromUserData = removeItemFromUserData;
 exports.addProductToLikedList = addProductToLikedList;
+exports.addProductToCart = addProductToCart;
 exports.deleteUser = deleteUser;

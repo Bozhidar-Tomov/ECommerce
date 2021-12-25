@@ -25,6 +25,9 @@ export const sendVerificationEmail = (userInfo) =>
   API.post("/users/sendVerificationEmail", userInfo);
 
 export const fetchUserData = () => API.get("/users/fetchUserData");
-export const removeItemFromCart = (item) => API.post("/users/removeItemFromCart", item);
+export const removeItemFromUserData = (item) => API.post("/users/removeItemFromUserData", item);
 export const handleLikedList = (item) => API.post("/users/addProductToLikedList", item);
+export const addProductToCart = (item) => API.post("/users/addProductToCart", item);
 export const deleteUser = (user) => API.delete("/users/deleteUser", user);
+
+export const checkout = (data) => API.post("/payments/create-checkout-session", data);

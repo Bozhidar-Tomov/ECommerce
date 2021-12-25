@@ -6,8 +6,9 @@ const {
   sendVerificationEmail,
   validate,
   addProductToLikedList,
+  addProductToCart,
   fetchUserData,
-  removeItemFromCart,
+  removeItemFromUserData,
   deleteUser,
 } = require("../controllers/user.js");
 
@@ -18,8 +19,9 @@ router.post("/signup", signup);
 router.post("/sendVerificationEmail", sendVerificationEmail);
 router.get("/validate/:token", validate);
 router.get("/fetchUserData", auth, fetchUserData);
-router.post("/removeItemFromCart", auth, removeItemFromCart);
+router.post("/removeItemFromUserData", auth, removeItemFromUserData);
 router.post("/addProductToLikedList", auth, addProductToLikedList);
+router.post("/addProductToCart", auth, addProductToCart);
 router.delete("/deleteUser", auth, deleteUser);
 
 module.exports = router;

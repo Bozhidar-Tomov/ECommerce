@@ -14,10 +14,12 @@ app.use(express.json());
 const productRoutes = require("./routes/products");
 const userRoutes = require("./routes/users");
 const promoCodeRoutes = require("./routes/promoCodes");
+const paymentRoute = require("./routes/paymentRoute");
 
 app.use("/products", productRoutes);
 app.use("/users", userRoutes);
 app.use("/promo-codes", promoCodeRoutes);
+app.use("/payments", paymentRoute);
 
 mongoose
   .connect(CONNECTION_URL, {

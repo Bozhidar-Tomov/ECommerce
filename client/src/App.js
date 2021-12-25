@@ -23,7 +23,7 @@ const LazyVerify = React.lazy(() => import("./components/AccountActivation/Verif
 const LazyDashboard = React.lazy(() => import("./components/Dashboard/Dashboard.component"));
 
 function App() {
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState("dark");
   const themeToggler = () => {
     theme === "light" ? setTheme("dark") : setTheme("light");
   };
@@ -37,23 +37,27 @@ function App() {
           <LazyNavbar themeToggler={themeToggler} />
           <LazyBlob />
           <Routes>
-            <Route exact path='/' component={<LazyLandingPage />} />
-            <Route exact path='/auth' component={<LazyAuth />} />
-            <Route exact path='/auth/verify' component={<LazyVerify />} />
+            <Route exact path='/' element={<LazyLandingPage />} />
+            <Route exact path='/auth' element={<LazyAuth />} />
+            <Route exact path='/auth/verify' element={<LazyVerify />} />
+            <Route exact path='/auth/activationStatus/:token' element={<LazyActivationStatus />} />
+            <Route exact path='/store' element={<LazyStore />} />
+            <Route path='/product/:id' element={<LazyProductShowcase />} />
             <Route
               exact
-              path='/auth/activationStatus/:token'
-              component={<LazyActivationStatus />}
-            />
-            <Route exact path='/store' component={<LazyStore />} />
-            <Route exact path='/product/:id' component={<LazyProductShowcase />} />
-            <Route exact path='/dashboard' component={<LazyDashboard />} />
-            <LazyProtectedRoute
-              exact
+              path='/dashboard'
+              element={
+                <LazyProtectedRoute>
+                  <LazyDashboard />
+                </LazyProtectedRoute>
+              }></Route>
+            <Route
               path='/checkout/:id'
-              component={LazyCheckout}
-              type='userAuthenticate'
-            />
+              element={
+                <LazyProtectedRoute>
+                  <LazyCheckout />
+                </LazyProtectedRoute>
+              }></Route>
           </Routes>
         </React.Suspense>
       </Router>

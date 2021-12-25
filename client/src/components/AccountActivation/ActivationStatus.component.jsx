@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router";
 import OK from "../../images/check.svg";
 
 import Container from "react-bootstrap/Container";
@@ -12,16 +13,17 @@ import * as api from "../../api/index";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 
-function ActivationStatus(props) {
+function ActivationStatus() {
   console.log("rendering");
   const [state, setState] = useState(null);
   const theme = sessionStorage.getItem("theme");
   const oppositeTheme = theme === "dark" ? "light" : "dark";
+  const params = useParams();
 
   useEffect(() => {
     async function verifyEmail() {
       await api
-        .verifyEmail(props.match.params.token)
+        .verifyEmail(params.token)
         .then((res) => {
           setState(() => ({ response: res.data, status: res.status }));
         })
@@ -30,7 +32,7 @@ function ActivationStatus(props) {
         });
     }
     verifyEmail();
-  }, [props.match.params.token]);
+  }, [params.token]);
 
   if (!state) return <></>;
 

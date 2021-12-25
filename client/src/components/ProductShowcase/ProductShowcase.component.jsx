@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router";
+import { CLEAR_ERROR, AUTH_ERROR } from "../../constants/actionTypes";
 
 import * as api from "../../api";
 
@@ -14,8 +16,10 @@ import "./styles.css";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 import Card from "react-bootstrap/Card";
+import Alert from "react-bootstrap/Alert";
 
 import Button from "react-bootstrap/Button";
 import Image from "react-bootstrap/Image";
@@ -23,6 +27,7 @@ import Image from "react-bootstrap/Image";
 import Footer from "../Footer/Footer.component";
 
 import { RiHeartLine, RiHeartFill } from "react-icons/ri";
+import { useDispatch, useSelector } from "react-redux";
 
 const theme = sessionStorage.getItem("theme");
 const oppositeTheme = theme === "dark" ? "light" : "dark";
@@ -52,28 +57,66 @@ function getAdditionalInfo(info) {
   }
 }
 
-function ProductShowcase(props) {
+function ProductShowcase() {
   const [data, setData] = useState(null);
-  const [btnInfo] = useState("Add to cart");
   const [isProductLiked, setIsProductLiked] = useState(false);
+  const [isProductInCart, setIsProductInCart] = useState(false);
+  const error = useSelector((state) => state.auth.errors);
+  const params = useParams();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
-      await api.fetchProductData(props.match.params.id).then((res) => setData(res.data));
+      await api.fetchProductData(params.id).then((res) => setData(res.data));
     };
     fetchData();
-  }, [props.match.params.id]);
+  });
+
+  const addProductToCart = async () => {
+    await api
+      .addProductToCart({ productId: params.id })
+      .then((data) => {
+        console.log(data);
+        setIsProductInCart((e) => !e);
+      })
+      .catch((err) =>
+        dispatch({
+          type: AUTH_ERROR,
+          payload: err.response.data.message || "Internal server error",
+        })
+      );
+  };
 
   const likeProduct = async () => {
-    await api.handleLikedList({ productId: props.match.params.id }).then((data) => {
-      console.log(data);
-      setIsProductLiked((e) => !e);
-    });
+    await api
+      .handleLikedList({ productId: params.id })
+      .then((data) => {
+        console.log(data);
+        setIsProductLiked((e) => !e);
+      })
+      .catch((err) =>
+        dispatch({
+          type: AUTH_ERROR,
+          payload: err.response.data.message || "Internal server error",
+        })
+      );
   };
 
   if (!data) return null;
   return (
     <React.Fragment>
+      <Alert
+        role='alert'
+        variant={`${theme === "dark" ? "dark" : "danger"}`}
+        className='alert_ fs-5 d-flex align-items-center justify-content-center'
+        show={error}
+        dismissible
+        onClose={() => dispatch({ type: CLEAR_ERROR, payload: null })}>
+        <span>
+          <AiOutlineExclamationCircle size='30' />
+          &nbsp;&nbsp;&nbsp;{error}
+        </span>
+      </Alert>
       <Container fluid='lg' className='pb-5'>
         <Row>
           <Col lg={6} md={4} className='d-flex justify-content-center align-items-center'>
@@ -140,8 +183,8 @@ function ProductShowcase(props) {
                       <RiHeartLine className='me-3' size={32} />
                     )}
                   </span>
-                  <Button variant='primary' size='lg' className='w-75'>
-                    {btnInfo} &nbsp;
+                  <Button onClick={addProductToCart} variant='primary' size='lg' className='w-75'>
+                    {isProductInCart ? "Remove from cart" : "Add to cart"} &nbsp;
                     <svg
                       width='20'
                       height='20'

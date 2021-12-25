@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router";
 
 import "./styles.css";
 
@@ -22,19 +23,20 @@ import * as api from "../../api";
 import { useDispatch, useSelector } from "react-redux";
 import { validateCode } from "../../actions/promoCode";
 
-function Checkout(props) {
+function Checkout() {
   const [data, setData] = useState([null]);
   const codeData = useSelector((state) => state.promoCode);
   const dispatch = useDispatch();
+  const params = useParams();
 
   console.log(data);
 
   useEffect(() => {
     const fetchData = async () => {
-      await api.fetchProductData(props.match.params.id).then((res) => setData(res.data));
+      await api.fetchProductData(params.id).then((res) => setData(res.data));
     };
     fetchData();
-  }, [props.match.params.id]);
+  }, [params.id]);
 
   function calculateDiscount(typeDiscount, discountAmount) {
     console.log(typeDiscount, discountAmount);
