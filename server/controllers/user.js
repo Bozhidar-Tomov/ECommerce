@@ -5,7 +5,7 @@ const Product = require("../models/product.model");
 const mongoose = require("mongoose");
 const axios = require("axios");
 const { sendConfirmationEmail } = require("../utils/verificationEmail");
-const { CART, LIKED_LIST } = require("../constants/actionTypes");
+const constants = require("../constants");
 
 require("dotenv").config();
 
@@ -197,7 +197,7 @@ const fetchUserData = async (req, res) => {
 const removeItemFromUserData = async (req, res) => {
   const { item, field } = req.body;
 
-  if ((field === CART) ^ (field === LIKED_LIST)) {
+  if ((field === constants.CART) ^ (field === constants.LIKED_LIST)) {
     await User.findById(req.userId)
       .then(async (data) => {
         const index = data[field].indexOf(item);

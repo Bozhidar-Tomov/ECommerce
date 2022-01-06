@@ -231,7 +231,7 @@ function Dashboard() {
                 <Form.Check.Input name='menus' type='radio'></Form.Check.Input>
                 <div
                   className={`p-3 bg-${theme} text-${oppositeTheme} shadow-sm d-flex justify-content-around align-items-center rounded clickable`}>
-                  <p className='fs-5'>Products in cart</p>
+                  <p className='fs-5'>Orders</p>
                   <h3 className='fs-2 text-primary'>dev</h3>
                 </div>
               </Form.Check.Label>

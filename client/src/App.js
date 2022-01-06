@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./components/globalStyles";
 import { lightTheme, darkTheme } from "./themes";
+import PaymentSuccess from "./components/Payment/PaymentSuccess.component";
 
 const LazyNavbar = React.lazy(() => import("./components/NavBar/NavBar.component"));
 const LazyLandingPage = React.lazy(() => import("./components/LandingPage/LandingPage.component"));
@@ -43,6 +44,7 @@ function App() {
             <Route exact path='/auth/activationStatus/:token' element={<LazyActivationStatus />} />
             <Route exact path='/store' element={<LazyStore />} />
             <Route path='/product/:id' element={<LazyProductShowcase />} />
+            <Route path='payment/success' element={<PaymentSuccess />}></Route>
             <Route
               exact
               path='/dashboard'

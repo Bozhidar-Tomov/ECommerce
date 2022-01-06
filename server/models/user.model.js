@@ -29,6 +29,7 @@ const userSchema = new Schema(
         ref: "products",
       },
     ],
+    orders: [{ type: Schema.Types.Array }],
     isAccountValidated: { type: Boolean, default: false },
   },
   {
