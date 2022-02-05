@@ -30,7 +30,7 @@ function getInfo(info) {
 function Product(props) {
   return (
     <Col xl={3} lg={4} md={6} sm={12} key={props._id}>
-      <Card className='card_ shadow p-3' bg={theme} text={oppositeTheme}>
+      <Card className='card_ shadow-sm p-3' bg={theme} text={oppositeTheme}>
         <img src={laptop} className='card-img-top' alt='' />
         <Card.Body>
           <Card.Title>

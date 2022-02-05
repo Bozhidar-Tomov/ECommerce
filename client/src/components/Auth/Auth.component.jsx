@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
-
 import "./styles.css";
 
 import { GoogleLogin } from "react-google-login";
 
-import { CLEAR_ERROR } from "../../constants/actionTypes";
+import { CLEAR_ERROR, EU } from "../../constants/actionTypes";
 
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -47,7 +46,7 @@ const schemaSignUp = yup.object().shape({
     .max(40, "Must be 40 characters or less.")
     .required(),
   email: yup.string().email("Invalid email").required(),
-  country: yup.string().required(),
+  country: yup.string().required("Select your country from the list"),
   password: yup
     .string()
     .min(8, "Password must be between 8 and 40 characters")
@@ -77,13 +76,37 @@ function Auth() {
   const theme = sessionStorage.getItem("theme");
   const oppositeTheme = theme === "dark" ? "light" : "dark";
   const error = useSelector((state) => state.auth.errors);
+  useSelector((state) => console.log("state", state));
   const [isSignUp, setSignUp] = useState(false);
   const [showPass, setShowPass] = useState(false);
-  const [userGeoId, setUserGeoId] = useState(sessionStorage.getItem("userGeoId"));
+  const [userGeoId, setUserGeoId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const recaptchaRef = useRef();
+
+  useEffect(() => {
+    async function getLocation() {
+      if (!userGeoId) {
+        await fetch("https://ipapi.co/json/")
+          .then((response) => response.json())
+          .then((data) => {
+            setUserGeoId({
+              countryCode: data.country_code,
+              countryName: data.country_name,
+              ip: data.ip,
+              internetProvider: data.org,
+              currency: data.currency,
+            });
+          });
+      }
+    }
+    getLocation();
+  });
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, [error]);
 
   const googleSuccess = async (res) => {
     const result = res.profileObj;
@@ -93,10 +116,9 @@ function Auth() {
       firstName: result.givenName,
       lastName: result.familyName,
       email: result.email,
-      country: userGeoId[1],
+      country: userGeoId.countryCode,
       password: result.googleId,
       confirmPassword: result.googleId,
-      //FIXME: cannot get and send rememberMe
       rememberMe: false,
     };
 
@@ -104,9 +126,9 @@ function Auth() {
     recaptchaRef.current.reset();
 
     if (isSignUp) {
-      dispatch(signup({ ...formData, recaptchaToken, googleToken, ip: userGeoId[1] }, navigate));
+      dispatch(signup({ ...formData, recaptchaToken, googleToken, ip: userGeoId.ip }, navigate));
     } else {
-      dispatch(signin({ ...formData, recaptchaToken, googleToken, ip: userGeoId[1] }, navigate));
+      dispatch(signin({ ...formData, recaptchaToken, googleToken, ip: userGeoId.ip }, navigate));
     }
   };
 
@@ -114,24 +136,10 @@ function Auth() {
     console.log("google unsuccessful", err);
   };
 
-  useEffect(() => {
-    async function getLocation() {
-      if (!userGeoId) {
-        await fetch("https://ipapi.co/json/")
-          .then((response) => response.json())
-          .then((data) => {
-            sessionStorage.setItem("userGeoId", [data.country_name, data.ip]);
-            setUserGeoId([data.country_name, data.ip]);
-          });
-      }
-    }
-    getLocation();
-  }, [error, userGeoId]);
-
   function getCountries() {
     return Object.keys(countries?.countries).map((code) => {
       const country = countries?.countries[code].name;
-      if (countries.countries[code].continent === "EU") {
+      if (countries.countries[code].continent === EU) {
         return (
           <option key={country} value={country}>
             {country}
@@ -183,26 +191,30 @@ function Auth() {
             <Formik
               validationSchema={isSignUp ? schemaSignUp : schemaSignIn}
               onSubmit={async (formData) => {
+                console.log(formData);
                 const recaptchaToken = await recaptchaRef.current.executeAsync();
                 recaptchaRef.current.reset();
 
-                setIsLoading(true);
                 dispatch({ type: CLEAR_ERROR });
+                setIsLoading(true);
 
                 if (isSignUp) {
-                  dispatch(signup({ ...formData, recaptchaToken, ip: userGeoId[1] }, navigate));
+                  dispatch(signup({ ...formData, recaptchaToken, ip: userGeoId.ip }, navigate));
                 } else {
-                  dispatch(signin({ ...formData, recaptchaToken, ip: userGeoId[1] }, navigate));
+                  dispatch(signin({ ...formData, recaptchaToken, ip: userGeoId.ip }, navigate));
                 }
               }}
               initialValues={{
-                firstName: "rrr",
-                lastName: "ttt",
-                email: "w@w.d",
-                country: "r",
-                password: "asdfghas",
-                confirmPassword: "asdfghas",
+                firstName: "wee",
+                lastName: "wee",
+                email: "development.acc5@gmail.com",
+                country: userGeoId.countryName,
+                countryCode: userGeoId.countryCode,
+                password: "dg7ugyjyj6h",
+                confirmPassword: "dg7ugyjyj6h",
                 rememberMe: false,
+                internetProvider: userGeoId.internetProvider,
+                currency: userGeoId.currency,
               }}>
               {({ handleSubmit, handleChange, handleReset, values, touched, errors }) => (
                 <Form noValidate onSubmit={handleSubmit}>
@@ -269,11 +281,16 @@ function Auth() {
                               <FaMapMarkerAlt />
                             </InputGroup.Text>
                             <Form.Select
+                              name='country'
                               className={`bg-${theme} text-${oppositeTheme}`}
-                              defaultValue={userGeoId[0]}
+                              defaultValue={userGeoId.countryName}
+                              isInvalid={!!errors.country}
                               onChange={handleChange}>
                               {getCountries()}
                             </Form.Select>
+                            <Form.Control.Feedback type='invalid'>
+                              {errors.country}
+                            </Form.Control.Feedback>
                           </InputGroup>
                         </Form.Group>
                         <hr className='mt-5' />
@@ -401,7 +418,6 @@ function Auth() {
                         clientId={process.env.REACT_APP_GOOGLE_ID}
                         render={(renderProps) => (
                           <Button
-                            type='submit'
                             variant='outline-primary'
                             className='my-2'
                             onClick={renderProps.onClick}

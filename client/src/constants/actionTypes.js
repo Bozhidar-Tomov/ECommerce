@@ -10,3 +10,5 @@ export const PROMO_CODE_SUCCESS = "PROMO_CODE_SUCCESS";
 
 export const CART = "cart";
 export const LIKED_LIST = "likedList";
+
+export const EU = "EU";

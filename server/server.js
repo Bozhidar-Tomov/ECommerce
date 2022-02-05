@@ -9,7 +9,14 @@ const PORT = process.env.PORT || 5000;
 const CONNECTION_URL = process.env.CONNECTION_URL;
 
 app.use(cors());
-app.use(express.json());
+app.use((req, res, next) => {
+  console.log(req.originalUrl);
+  if (req.originalUrl === "/payments/webhook/") {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 
 const productRoutes = require("./routes/products");
 const userRoutes = require("./routes/users");

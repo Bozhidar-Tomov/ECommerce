@@ -57,13 +57,13 @@ function ActivationStatus() {
           </Row>
 
           <Card.Title>
-            <p className='display-4 my-3 text-center'>{state.response.title}</p>
+            <span className='display-4 my-3 text-center'>{state.response.title}</span>
           </Card.Title>
           <Card.Text>
-            <p className='fs-4 lead px-2 text-start mt-2 text-center'>
+            <span className='fs-4 lead px-2 text-start mt-2 text-center'>
               {state.response.description}
               <br />
-            </p>
+            </span>
           </Card.Text>
           {state.status === 401 && (
             <Col className='justify-content-center'>

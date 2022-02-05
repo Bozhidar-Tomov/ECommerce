@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 const Product = require("../models/product.model");
+const Order = require("../models/order.model");
 const mongoose = require("mongoose");
 const axios = require("axios");
 const { sendConfirmationEmail } = require("../utils/verificationEmail");
@@ -48,7 +49,7 @@ const signin = async (req, res) => {
       },
       process.env.SECRET_KEY,
       {
-        expiresIn: 60 * 60 * 24,
+        expiresIn: 1000 * 60 * 60 * 12, // 6 hours validity
       }
     );
 
@@ -63,8 +64,18 @@ const signin = async (req, res) => {
 };
 
 const signup = async (req, res) => {
-  const { firstName, lastName, email, country, password, confirmPassword, recaptchaToken, ip } =
-    req.body;
+  const {
+    firstName,
+    lastName,
+    email,
+    password,
+    confirmPassword,
+    recaptchaToken,
+    ip,
+    internetProvider,
+    currency,
+    country,
+  } = req.body;
 
   try {
     if (!(await validateHuman(recaptchaToken, ip))) {
@@ -77,7 +88,7 @@ const signup = async (req, res) => {
     if (existingUser) return res.status(422).json({ message: "User already exists." });
 
     if (password !== confirmPassword) {
-      return res.status(401).json({ message: "Password does not match." });
+      return res.status(401).send({ message: "Password does not match." });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -88,6 +99,9 @@ const signup = async (req, res) => {
       email,
       country,
       password: hashedPassword,
+      ip,
+      currency,
+      internetProvider,
     });
 
     return res.status(201).json({ name: result.name, email: result.email, userID: result._id });
@@ -101,7 +115,7 @@ const sendVerificationEmail = async (req, res) => {
   try {
     const { name, email, userID } = req.body;
     const token = jwt.sign({ name, email, id: userID }, process.env.SECRET_KEY, {
-      expiresIn: 60 * 60 * 24,
+      expiresIn: 1000 * 60 * 15, // 15 minutes validity,
     });
 
     await sendConfirmationEmail(name, email, token);
@@ -155,14 +169,14 @@ const validate = async (req, res) => {
 const fetchUserData = async (req, res) => {
   await User.findById(req.userId)
     .then(async (data) => {
-      let info = [];
+      let info = {};
       await Product.find({ _id: { $in: data.cart } })
         .then((data) => {
           let cart = [];
           for (item of data) {
             cart.push({ name: item.name, price: item.price, id: item._id });
           }
-          info.push(cart);
+          info.cart = cart;
         })
         .catch((err) => {
           res.status(400).send(err);
@@ -175,18 +189,42 @@ const fetchUserData = async (req, res) => {
           for (item of data) {
             likedList.push({ name: item.name, price: item.price, id: item._id });
           }
-          info.push(likedList);
+          info.likedList = likedList;
         })
         .catch((err) => {
           res.status(400).send(err);
           console.log(err);
         });
-      info.push([
-        data.country,
-        data.email,
-        data.createdAt.toString().substr(4, 17),
-        data.isAccountValidated,
-      ]);
+      let ordersList = [];
+      for (order of data.orders) {
+        await Order.findById(order).then(async (orderData) => {
+          let orderObject = {};
+          let itemsList = [];
+          await Product.find({ _id: { $in: orderData.items } })
+            .then((productData) => {
+              for (item of productData) {
+                itemsList.push({ name: item.name, price: item.price, id: item._id });
+              }
+              orderObject.items = itemsList;
+              orderObject.amount = orderData.amount;
+              orderObject.phoneNumber = orderData.phoneNumber;
+
+              ordersList.push(orderObject);
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        });
+      }
+
+      info.userInfo = {
+        country: data.country,
+        email: data.email,
+        createdAt: data.createdAt.toString().substr(4, 17),
+        isAccountValidated: data.isAccountValidated,
+      };
+      info.ordersList = ordersList;
+
       res.status(200).send(info);
     })
     .catch((error) => {

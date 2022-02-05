@@ -6,6 +6,7 @@ import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./components/globalStyles";
 import { lightTheme, darkTheme } from "./themes";
 import PaymentSuccess from "./components/Payment/PaymentSuccess.component";
+import PaymentCancel from "./components/Payment/PaymentCancel.component";
 
 const LazyNavbar = React.lazy(() => import("./components/NavBar/NavBar.component"));
 const LazyLandingPage = React.lazy(() => import("./components/LandingPage/LandingPage.component"));
@@ -24,7 +25,9 @@ const LazyVerify = React.lazy(() => import("./components/AccountActivation/Verif
 const LazyDashboard = React.lazy(() => import("./components/Dashboard/Dashboard.component"));
 
 function App() {
-  const [theme, setTheme] = useState("dark");
+  const [theme, setTheme] = useState(
+    window?.matchMedia("(prefers-color-scheme: dark)")?.matches ? "dark" : "light"
+  );
   const themeToggler = () => {
     theme === "light" ? setTheme("dark") : setTheme("light");
   };
@@ -45,6 +48,7 @@ function App() {
             <Route exact path='/store' element={<LazyStore />} />
             <Route path='/product/:id' element={<LazyProductShowcase />} />
             <Route path='payment/success' element={<PaymentSuccess />}></Route>
+            <Route path='payment/cancel' element={<PaymentCancel />}></Route>
             <Route
               exact
               path='/dashboard'

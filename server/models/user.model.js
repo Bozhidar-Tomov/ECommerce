@@ -15,8 +15,11 @@ const userSchema = new Schema(
       max: [40, " Name must be between 3 and 40 characters"],
     },
     email: { type: String, required: true, max: 80 },
-    country: { type: String, required: true, max: 3 },
+    country: { type: String, required: true, max: 50 },
     password: { type: String, required: true },
+    ip: { type: String },
+    currency: { type: String },
+    internetProvider: { type: String },
     cart: [
       {
         type: Schema.Types.ObjectId,
@@ -29,7 +32,12 @@ const userSchema = new Schema(
         ref: "products",
       },
     ],
-    orders: [{ type: Schema.Types.Array }],
+    orders: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "orders",
+      },
+    ],
     isAccountValidated: { type: Boolean, default: false },
   },
   {

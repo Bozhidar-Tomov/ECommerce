@@ -10,6 +10,8 @@ import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import Stack from "react-bootstrap/Stack";
 import Badge from "react-bootstrap/Badge";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 import Spinner from "react-bootstrap/Spinner";
 import Swal from "sweetalert2";
 
@@ -27,6 +29,7 @@ import { useNavigate } from "react-router";
 import { FiTrash2 } from "react-icons/fi";
 import { RiDislikeLine } from "react-icons/ri";
 import Avatar from "react-avatar";
+import { sendVerificationEmail } from "../../api";
 import decode from "jwt-decode";
 
 import "./styles.css";
@@ -35,7 +38,7 @@ function Dashboard() {
   console.info("render");
   const dispatch = useDispatch();
   const [userData, setUserData] = useState(null);
-  const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(CART);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const theme = sessionStorage.getItem("theme");
@@ -60,19 +63,23 @@ function Dashboard() {
     }
     fetch();
   }, []);
+  console.log(userData);
 
   async function removeItem(item) {
     await api
       .removeItemFromUserData({
         item,
-        field: current === 0 ? CART : current === 1 ? LIKED_LIST : null,
+        field: current === CART ? CART : current === LIKED_LIST ? LIKED_LIST : null,
       })
       .then(() => {
-        setUserData(userData.map((user) => user.filter((el) => el.id !== item)));
+        let a = JSON.parse(JSON.stringify(userData));
+        a[current] = a[current].filter((itemList) => itemList.id !== item);
+
+        setUserData(a);
       })
       .catch((error) => console.error("error", error));
   }
-  console.log(userData);
+
   const Product = (props) => (
     <tr>
       <td className='clickable' onClick={() => navigate(`/product/${props.id}`)}>
@@ -83,7 +90,7 @@ function Dashboard() {
       </td>
       <td>
         <Button variant='outline-danger' onClick={() => removeItem(props.id)}>
-          {current === 0 ? <FiTrash2 /> : <RiDislikeLine />}
+          {current === CART ? <FiTrash2 /> : <RiDislikeLine />}
         </Button>
       </td>
     </tr>
@@ -115,21 +122,47 @@ function Dashboard() {
               <p className='fs-4 lead'>
                 <strong>{decodedToken.name}</strong>
               </p>
-              {!decodedToken.isAccountValidated && (
-                <Badge pill className='fs-6 text-dark w-50' bg='warning'>
-                  Not verified
-                </Badge>
+              {!userData.userInfo.isAccountValidated && (
+                <OverlayTrigger
+                  placement='right'
+                  delay={{ show: 150, hide: 200 }}
+                  overlay={<Tooltip>Click to activate</Tooltip>}>
+                  <Badge
+                    pill
+                    className='fs-6 text-dark w-50 clickable'
+                    bg='warning'
+                    onClick={() => {
+                      dispatch(
+                        sendVerificationEmail({
+                          name: decodedToken.name,
+                          email: decodedToken.email,
+                          userID: decodedToken.id,
+                        }).then(
+                          Swal.fire({
+                            titleText: "Confirmation email has been sent!",
+                            html: `<p>If you can't see the email, sent to <strong>${decodedToken.email}</strong>, check spam folder.</p>`,
+                            icon: "success",
+                            showConfirmButton: true,
+                            background: theme === "dark" ? "#303030" : "#fcfcfc",
+                            color: theme === "light" ? "#545454" : "#f3f3f3",
+                          })
+                        )
+                      );
+                    }}>
+                    Not verified
+                  </Badge>
+                </OverlayTrigger>
               )}
             </Row>
             <hr />
             <Row className='fs-5 lead'>
               <p>
-                Country: <strong>{userData[2][0]}</strong>
+                Country: <strong>{userData.userInfo.country}</strong>
               </p>
 
               <div className='d-flex justify-content-between'>
                 <p>
-                  Email address: <strong>{userData[2][1]}</strong>
+                  Email address: <strong>{userData.userInfo.email}</strong>
                 </p>
                 &nbsp;
                 <button
@@ -153,7 +186,7 @@ function Dashboard() {
               </div>
 
               <p>
-                Account created:<strong> {userData[2][2]}</strong>
+                Account created:<strong> {userData.userInfo.createdAt}</strong>
               </p>
             </Row>
             <hr />
@@ -205,25 +238,25 @@ function Dashboard() {
               <Form.Check.Label className='w-100'>
                 <Form.Check.Input
                   defaultChecked
-                  onClick={() => setCurrent(0)}
+                  onClick={() => setCurrent(CART)}
                   name='menus'
                   type='radio'></Form.Check.Input>
                 <div
                   className={`p-3 bg-${theme} text-${oppositeTheme} shadow-sm d-flex  justify-content-around align-items-center rounded clickable`}>
                   <p className='fs-5'>Products in cart</p>
-                  <h3 className='fs-2 text-primary'>{userData[0].length}</h3>
+                  <h3 className='fs-2 text-primary'>{userData.cart.length}</h3>
                 </div>
               </Form.Check.Label>
 
               <Form.Check.Label className='w-100'>
                 <Form.Check.Input
-                  onClick={() => setCurrent(1)}
+                  onClick={() => setCurrent("likedList")}
                   name='menus'
                   type='radio'></Form.Check.Input>
                 <div
                   className={`p-3 bg-${theme} text-${oppositeTheme} shadow-sm d-flex justify-content-around align-items-center rounded clickable`}>
                   <p className='fs-5'>Liked products</p>
-                  <h3 className='fs-2 text-primary'>{userData[1].length}</h3>
+                  <h3 className='fs-2 text-primary'>{userData.likedList.length}</h3>
                 </div>
               </Form.Check.Label>
 
@@ -251,7 +284,7 @@ function Dashboard() {
                 <tbody>{productList()}</tbody>
               </Table>
             </Row>
-            {current === 0 && userData[0].length > 0 && (
+            {current === CART && userData.cart.length > 0 && (
               <Row>
                 <Button
                   as={Link}

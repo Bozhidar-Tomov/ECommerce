@@ -70,7 +70,7 @@ function ProductShowcase() {
       await api.fetchProductData(params.id).then((res) => setData(res.data));
     };
     fetchData();
-  });
+  }, [params.id]);
 
   const addProductToCart = async () => {
     await api
