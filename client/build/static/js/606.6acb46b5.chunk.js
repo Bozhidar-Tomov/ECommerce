@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkclient=self.webpackChunkclient||[]).push([[606],{2606:function(a,e,t){t.r(e),t.d(e,{default:function(){return i}});t(2791);var c=t.p+"static/media/blob.ce1f4802288a99a603a1b982d9d0198c.svg",n=t(184);var i=function(){return(0,n.jsx)("img",{className:"blob",src:c,alt:"blob","aria-hidden":"true"})}}}]);
+//# sourceMappingURL=606.6acb46b5.chunk.js.map

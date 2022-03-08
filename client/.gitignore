@@ -9,8 +9,6 @@
 /coverage
 
 # production
-/build
-/public
 
 # misc
 .env
