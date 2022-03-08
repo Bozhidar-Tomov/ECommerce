@@ -4,12 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "npm run start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "scripts": {
-    "start": "npm run start",
-  },
 }
