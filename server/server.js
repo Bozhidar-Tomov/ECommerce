@@ -37,3 +37,7 @@ mongoose
     app.listen(PORT, () => console.log(`Server Running on Port: http://localhost:${PORT}`))
   )
   .catch((error) => console.log(`Error: ${error}. \nDid not connect`));
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static("../client/build"));
+}
