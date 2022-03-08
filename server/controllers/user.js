@@ -258,6 +258,7 @@ const removeItemFromUserData = async (req, res) => {
       });
   } else {
     console.log("not executed");
+    return res.status(400).send();
   }
 };
 

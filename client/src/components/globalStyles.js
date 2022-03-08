@@ -48,4 +48,8 @@ body,
   background-color: ${({ theme }) => theme.paginationHoverColor};
   color: ${({ theme }) => theme.text};
 }
+.card {
+  background-color: ${({ theme }) => theme.cardBgColor} !important ;
+  color: ${({ theme }) => theme.text} !important;
+}
   `;
