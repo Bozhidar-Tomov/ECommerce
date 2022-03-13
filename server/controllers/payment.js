@@ -18,10 +18,9 @@ const createCheckoutSession = async (req, res) => {
       await Product.findById(item).then((data) => {
         if (seen.indexOf(data.code) === -1) {
           seen.push(data.code);
-
           items.push({
             name: data.name,
-            amount: 150,
+            amount: data.price * 100,
             description: data.category + ` • Item: ${data.code}`,
             currency: "usd",
             quantity: 1,
@@ -50,6 +49,7 @@ const createCheckoutSession = async (req, res) => {
       cancel_url: "http://localhost:3000/payment/cancel",
     })
     .then(async (e) => {
+      console.log("seen:", seen, "\n items:", items);
       res.status(200).send(e.url);
     })
     .catch((err) => console.log("ERROR:", err));
@@ -63,15 +63,13 @@ const webhook = async (req, res) => {
     event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
   } catch (err) {
     console.log(err.message);
-    // res.status(400).send(`Webhook Error: ${err.message}`);
+    res.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
 
   switch (event.type) {
     case "payment_intent.created":
       res.status(200).send();
-      // console.log("event", event);
-      // Then define and call a function to handle the event payment_intent.created
       break;
     case "payment_intent.succeeded":
       await axios
@@ -92,8 +90,6 @@ const webhook = async (req, res) => {
               status: "completed",
             })
               .then(async (data) => {
-                // console.log("order data", data._id);
-                // console.log("user data", userData);
                 let order = userData.orders;
                 order.push(data._id);
 

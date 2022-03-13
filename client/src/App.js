@@ -7,6 +7,7 @@ import { GlobalStyles } from "./components/globalStyles";
 import { lightTheme, darkTheme } from "./themes";
 import PaymentSuccess from "./components/Payment/PaymentSuccess.component";
 import PaymentCancel from "./components/Payment/PaymentCancel.component";
+import PageNotFound from "./components/PageNotFound/PageNotFound.component";
 
 const LazyNavbar = React.lazy(() => import("./components/NavBar/NavBar.component"));
 const LazyLandingPage = React.lazy(() => import("./components/LandingPage/LandingPage.component"));
@@ -64,6 +65,7 @@ function App() {
                   <LazyCheckout />
                 </LazyProtectedRoute>
               }></Route>
+            <Route path='*' element={<PageNotFound />}></Route>
           </Routes>
         </React.Suspense>
       </Router>

@@ -170,11 +170,13 @@ const fetchUserData = async (req, res) => {
   await User.findById(req.userId)
     .then(async (data) => {
       let info = {};
+      let amount = 0;
       await Product.find({ _id: { $in: data.cart } })
         .then((data) => {
           let cart = [];
           for (item of data) {
             cart.push({ name: item.name, price: item.price, id: item._id });
+            amount += item.price;
           }
           info.cart = cart;
         })
@@ -222,6 +224,7 @@ const fetchUserData = async (req, res) => {
         email: data.email,
         createdAt: data.createdAt.toString().substr(4, 17),
         isAccountValidated: data.isAccountValidated,
+        amount: amount,
       };
       info.ordersList = ordersList;
 

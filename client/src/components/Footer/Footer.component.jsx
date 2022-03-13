@@ -6,6 +6,9 @@ import { ImGoogle } from "react-icons/im";
 import { FiInstagram } from "react-icons/fi";
 import { FaLinkedin } from "react-icons/fa";
 import { ImGithub } from "react-icons/im";
+import { MdLocationOn } from "react-icons/md";
+import { MdEmail } from "react-icons/md";
+import { MdOutlinePhoneIphone } from "react-icons/md";
 
 import "./styles.css";
 
@@ -48,33 +51,28 @@ function Footer() {
         <div className='container text-center text-md-start mt-3'>
           <div className='row mt-3'>
             <div className='col-md-3 col-lg-4 col-xl-3 mx-auto mb-4'>
-              <h2 className='text-uppercase fw-bold mb-4 fs-6'>Company name</h2>
+              <h2 className='text-uppercase fw-bold mb-4 fs-6'>Our company</h2>
               <p>
-                Here you can use rows and columns to organize your footer content. Lorem ipsum dolor
-                sit amet, consectetur adipisicing elit.
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem inventore nobis
+                officia, numquam quasi soluta facere atque reprehenderit mollitia error?
               </p>
             </div>
 
             <div className='col-md-2 col-lg-2 col-xl-2 mx-auto mb-2'>
               <h2 className='text-uppercase fw-bold mb-4 fs-6'>Products</h2>
               <p>
-                <a href='#!' className='text-reset'>
-                  Angular
+                <a href='/store' className='text-reset'>
+                  Laptops
                 </a>
               </p>
               <p>
                 <a href='#!' className='text-reset'>
-                  React
+                  Smartphones
                 </a>
               </p>
               <p>
                 <a href='#!' className='text-reset'>
-                  Vue
-                </a>
-              </p>
-              <p>
-                <a href='#!' className='text-reset'>
-                  Laravel
+                  Gaming PCs
                 </a>
               </p>
             </div>
@@ -82,13 +80,13 @@ function Footer() {
             <div className='col-md-3 col-lg-2 col-xl-2 mx-auto mb-2'>
               <h2 className='text-uppercase fw-bold mb-4 fs-6'>Useful links</h2>
               <p>
-                <a href='#!' className='text-reset'>
-                  Pricing
+                <a href='/terms-of-service' className='text-reset'>
+                  Terms of service
                 </a>
               </p>
               <p>
                 <a href='#!' className='text-reset'>
-                  Settings
+                  Store
                 </a>
               </p>
               <p>
@@ -96,27 +94,18 @@ function Footer() {
                   Orders
                 </a>
               </p>
-              <p>
-                <a href='#!' className='text-reset'>
-                  Help
-                </a>
-              </p>
             </div>
 
             <div className='col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-2'>
               <h2 className='text-uppercase fw-bold mb-4 fs-6'>Contact</h2>
               <p>
-                <i className='fas fa-home me-3'></i> New York, NY 10012, US
+                <MdLocationOn size={24} /> Varna, bld. Slivnitsa 2, BG
               </p>
               <p>
-                <i className='fas fa-envelope me-3'></i>
-                info@example.com
+                <MdEmail size={24} /> info@example.com
               </p>
               <p>
-                <i className='fas fa-phone me-3'></i> + 01 234 567 88
-              </p>
-              <p>
-                <i className='fas fa-print me-3'></i> + 01 234 567 89
+                <MdOutlinePhoneIphone size={24} /> + 01 234 567 88
               </p>
             </div>
           </div>
@@ -125,7 +114,7 @@ function Footer() {
 
       <div className='copyright text-center p-3'>
         © 2021 Copyright:
-        <span className='fw-bold'> Bozhidar Tomov</span>
+        <span className='fw-bold'> Tech Checkie</span>
       </div>
     </footer>
   );

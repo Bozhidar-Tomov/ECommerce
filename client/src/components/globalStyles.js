@@ -52,4 +52,8 @@ body,
   background-color: ${({ theme }) => theme.cardBgColor} !important ;
   color: ${({ theme }) => theme.text} !important;
 }
+.info-card {
+  background-color: ${({ theme }) => theme.infoCardBgColor} !important ;
+  color: ${({ theme }) => theme.infoCardColor} !important;
+}
   `;

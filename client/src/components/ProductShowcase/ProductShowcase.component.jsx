@@ -6,10 +6,10 @@ import * as api from "../../api";
 
 import img from "../../images/laptop.webp";
 import laptopSideways from "../../images/laptopSideways.png";
-import cpu from "../../images/cpu.svg";
-import gpu from "../../images/gpu.svg";
-import ssd from "../../images/ssd.svg";
-import ram from "../../images/ram.svg";
+import { ReactComponent as Cpu } from "../../images/cpu.svg";
+import { ReactComponent as Gpu } from "../../images/gpu.svg";
+import { ReactComponent as Ssd } from "../../images/ssd.svg";
+import { ReactComponent as Ram } from "../../images/ram.svg";
 
 import "./styles.css";
 
@@ -36,12 +36,12 @@ function getAdditionalInfo(info) {
   if (info) {
     return Object.entries(info).map(([key_, value_]) => {
       return (
-        <Card className='shadow-sm' key={key_} bg={theme} text={oppositeTheme}>
+        <Card className='shadow-sm info-card' key={key_} bg={theme} text={oppositeTheme}>
           <Card.Body>
             <Row className='p-2'>
               <Col>
                 <Card.Text>
-                  <span className='fs-5 fw-bold text-secondary'>{key_}:</span>
+                  <span className='fs-5 fw-bold'>{key_}:</span>
                 </Card.Text>
               </Col>
               <Col className='text-end'>
@@ -206,19 +206,19 @@ function ProductShowcase() {
         </Row>
         <Row>
           <Col md={3} className='text-center'>
-            <Image className='text-primary' src={cpu} alt='cpu' />
+            <Cpu />
             <p className='mt-2 lead'>{data.shortInfo?.CPU ? data.shortInfo?.CPU : "No data"}</p>
           </Col>
           <Col md={3} className='text-center'>
-            <Image className='text-primary' src={gpu} alt='gpu' />
+            <Gpu />
             <p className='mt-2 lead'>{data.shortInfo?.GPU ? data.shortInfo?.GPU : "No data"}</p>
           </Col>
           <Col md={3} className='text-center'>
-            <Image className='text-primary' src={ssd} alt='ssd' />
+            <Ssd />
             <p className='mt-2 lead'>{data.shortInfo?.SSD ? data.shortInfo?.SSD : "No data"}</p>
           </Col>
           <Col md={3} className='text-center'>
-            <Image className='text-primary' src={ram} alt='ram' />
+            <Ram />
             <p className='mt-2 lead'>{data.shortInfo?.RAM ? data.shortInfo?.RAM : "No data"}</p>
           </Col>
         </Row>

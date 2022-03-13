@@ -1,6 +1,9 @@
 export const lightTheme = {
   body: "#f8f8f8",
   text: "#363537",
+  cardBgColor: "#f8f8f8",
+  infoCardColor: "#3f2a75",
+  infoCardBgColor: "#ebe3ff",
 };
 export const darkTheme = {
   body: "#212529",
@@ -9,7 +12,5 @@ export const darkTheme = {
   paginationBgColor: "#2a2931",
   paginationHoverColor: "#464550",
   paginationColor: "#e8e4f1",
-  cardBgColor: "#212529",
+  cardBgColor: "#2a2e33",
 };
-
-//FIXME: Theme not updating when in productShowcase store and checkout

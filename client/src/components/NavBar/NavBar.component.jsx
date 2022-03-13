@@ -8,11 +8,15 @@ import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Badge from "react-bootstrap/Badge";
 import Nav from "react-bootstrap/Nav";
+import Image from "react-bootstrap/Image";
 import Avatar from "react-avatar";
 
 import { Link } from "react-router-dom";
 
 import decode from "jwt-decode";
+import Logo from "../../images/logo.png";
+
+import "./styles.css";
 
 function NavBar(props) {
   const theme = sessionStorage.getItem("theme");
@@ -48,13 +52,14 @@ function NavBar(props) {
   }, [user?.token, location, signOut]);
 
   return (
-    <Navbar bg={theme} variant={theme} expand='md' className='pt-3 mx-5'>
-      <Navbar.Brand href='/' className='fw-bold fst-normal text-primary'>
-        Online Partner Retailer
+    <Navbar bg={theme} variant={theme} expand='md' className='p-0 pt-1 mx-5'>
+      <Navbar.Brand href='/' className='fw-bold fst-normal text-primary pt-2'>
+        <Image src={Logo} alt='logo' className='logo' />
+        <span>&nbsp;&nbsp;&nbsp; Tech Checkie</span>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls='navbarScroll' />
       <Navbar.Collapse id='navbarScroll'>
-        <Nav className='me-auto my-2 my-lg-0' navbarScroll>
+        <Nav className='me-auto  my-lg-0' navbarScroll>
           <Nav.Link as={Link} to='/store'>
             Store
           </Nav.Link>

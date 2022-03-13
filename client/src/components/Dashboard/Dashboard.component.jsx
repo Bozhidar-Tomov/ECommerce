@@ -15,8 +15,6 @@ import Tooltip from "react-bootstrap/Tooltip";
 import Spinner from "react-bootstrap/Spinner";
 import Swal from "sweetalert2";
 
-import { Link } from "react-router-dom";
-
 import Footer from "../Footer/Footer.component";
 
 import { BsArrowRightCircleFill } from "react-icons/bs";
@@ -164,25 +162,6 @@ function Dashboard() {
                 <p>
                   Email address: <strong>{userData.userInfo.email}</strong>
                 </p>
-                &nbsp;
-                <button
-                  onClick={async () => {
-                    const { value: email } = await Swal.fire({
-                      title: "New Email Address",
-                      background: theme === "dark" ? "#303030" : "#fcfcfc",
-                      color: theme === "light" ? "#545454" : "#f3f3f3",
-                      input: "email",
-                      inputPlaceholder: "Enter your email address",
-                      confirmButtonText: "Update",
-                    });
-
-                    if (email) {
-                      Swal.fire(`Entered email: ${email}`);
-                    }
-                  }}
-                  className={`fs-5 text-end switch-btn text-${oppositeTheme}`}>
-                  change
-                </button>
               </div>
 
               <p>
@@ -287,14 +266,6 @@ function Dashboard() {
             {current === CART && userData.cart.length > 0 && (
               <Row>
                 <Button
-                  as={Link}
-                  to='../checkout/613e3e9bf52eba544e85c1cc'
-                  size='lg'
-                  variant='primary'
-                  className='mt-5'>
-                  Checkout &nbsp; <BsArrowRightCircleFill size={24} style={{ marginTop: -5 }} />
-                </Button>
-                <Button
                   onClick={async () => {
                     setIsLoading(true);
                     await api
@@ -313,7 +284,9 @@ function Dashboard() {
                   className='mt-5'>
                   {!isLoading ? (
                     <React.Fragment>
-                      test &nbsp; <BsArrowRightCircleFill size={24} style={{ marginTop: -5 }} />
+                      Checkout &nbsp;&nbsp;{" "}
+                      <span className='fs-5 fw-bold lead'>{userData.userInfo.amount}$</span>{" "}
+                      &nbsp;&nbsp; <BsArrowRightCircleFill size={24} style={{ marginTop: -5 }} />
                     </React.Fragment>
                   ) : (
                     <React.Fragment>
