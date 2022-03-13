@@ -49,7 +49,6 @@ const createCheckoutSession = async (req, res) => {
       cancel_url: "http://localhost:3000/payment/cancel",
     })
     .then(async (e) => {
-      console.log("seen:", seen, "\n items:", items);
       res.status(200).send(e.url);
     })
     .catch((err) => console.log("ERROR:", err));

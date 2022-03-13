@@ -76,7 +76,6 @@ function Auth() {
   const theme = sessionStorage.getItem("theme");
   const oppositeTheme = theme === "dark" ? "light" : "dark";
   const error = useSelector((state) => state.auth.errors);
-  useSelector((state) => console.log("state", state));
   const [isSignUp, setSignUp] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [userGeoId, setUserGeoId] = useState(null);
@@ -191,7 +190,6 @@ function Auth() {
             <Formik
               validationSchema={isSignUp ? schemaSignUp : schemaSignIn}
               onSubmit={async (formData) => {
-                console.log(formData);
                 const recaptchaToken = await recaptchaRef.current.executeAsync();
                 recaptchaRef.current.reset();
 

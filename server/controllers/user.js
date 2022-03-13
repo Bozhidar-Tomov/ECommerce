@@ -53,7 +53,7 @@ const signin = async (req, res) => {
       }
     );
 
-    return res.status(200).json({
+    return res.status(200).header("Cache-Control", "max-age=1800").json({
       token,
       rememberMe,
     });
@@ -143,7 +143,7 @@ const validate = async (req, res) => {
 
     if (result) {
       if (!result.isAccountValidated)
-        return res.status(200).json({
+        return res.status(200).header("Cache-Control", "max-age=180").json({
           title: "Email Verification Successful!",
           description: "Your email has been verified. You can now sign in and use our services.",
         });

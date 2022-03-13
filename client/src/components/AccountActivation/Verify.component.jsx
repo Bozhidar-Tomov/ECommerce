@@ -29,12 +29,10 @@ function Verify() {
   const oppositeTheme = theme === "dark" ? "light" : "dark";
 
   useEffect(() => {
-    console.log("run");
     dispatch(sendVerificationEmail(userInfo));
   });
   function resendEmail() {
     if (count < 5) {
-      console.log("resent!");
       dispatch(sendVerificationEmail(userInfo));
       count++;
     }

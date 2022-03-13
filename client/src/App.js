@@ -5,9 +5,6 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import { GlobalStyles } from "./components/globalStyles";
 import { lightTheme, darkTheme } from "./themes";
-import PaymentSuccess from "./components/Payment/PaymentSuccess.component";
-import PaymentCancel from "./components/Payment/PaymentCancel.component";
-import PageNotFound from "./components/PageNotFound/PageNotFound.component";
 
 const LazyNavbar = React.lazy(() => import("./components/NavBar/NavBar.component"));
 const LazyLandingPage = React.lazy(() => import("./components/LandingPage/LandingPage.component"));
@@ -17,13 +14,21 @@ const LazyStore = React.lazy(() => import("./components/Store_/Store.component")
 const LazyProductShowcase = React.lazy(() =>
   import("./components/ProductShowcase/ProductShowcase.component")
 );
-const LazyCheckout = React.lazy(() => import("./components/Checkout/Checkout.component"));
+
 const LazyProtectedRoute = React.lazy(() => import("./components/ProtectedRoute.component"));
 const LazyActivationStatus = React.lazy(() =>
   import("./components/AccountActivation/ActivationStatus.component")
 );
 const LazyVerify = React.lazy(() => import("./components/AccountActivation/Verify.component"));
 const LazyDashboard = React.lazy(() => import("./components/Dashboard/Dashboard.component"));
+
+const LazyPaymentSuccess = React.lazy(() =>
+  import("./components/Payment/PaymentSuccess.component")
+);
+const LazyPaymentCancel = React.lazy(() => import("./components/Payment/PaymentCancel.component"));
+const LazyPageNotFound = React.lazy(() =>
+  import("./components/PageNotFound/PageNotFound.component")
+);
 
 function App() {
   const [theme, setTheme] = useState(
@@ -48,8 +53,21 @@ function App() {
             <Route exact path='/auth/activationStatus/:token' element={<LazyActivationStatus />} />
             <Route exact path='/store' element={<LazyStore />} />
             <Route path='/product/:id' element={<LazyProductShowcase />} />
-            <Route path='payment/success' element={<PaymentSuccess />}></Route>
-            <Route path='payment/cancel' element={<PaymentCancel />}></Route>
+
+            <Route
+              path='payment/success'
+              element={
+                <LazyProtectedRoute>
+                  <LazyPaymentSuccess />
+                </LazyProtectedRoute>
+              }></Route>
+            <Route
+              path='payment/cancel'
+              element={
+                <LazyProtectedRoute>
+                  <LazyPaymentCancel />
+                </LazyProtectedRoute>
+              }></Route>
             <Route
               exact
               path='/dashboard'
@@ -58,14 +76,7 @@ function App() {
                   <LazyDashboard />
                 </LazyProtectedRoute>
               }></Route>
-            <Route
-              path='/checkout/:id'
-              element={
-                <LazyProtectedRoute>
-                  <LazyCheckout />
-                </LazyProtectedRoute>
-              }></Route>
-            <Route path='*' element={<PageNotFound />}></Route>
+            <Route path='*' element={<LazyPageNotFound />}></Route>
           </Routes>
         </React.Suspense>
       </Router>

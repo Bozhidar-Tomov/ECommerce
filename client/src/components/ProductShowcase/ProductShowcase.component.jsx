@@ -16,7 +16,6 @@ import "./styles.css";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 import Card from "react-bootstrap/Card";
 import Alert from "react-bootstrap/Alert";
@@ -27,6 +26,8 @@ import Image from "react-bootstrap/Image";
 import Footer from "../Footer/Footer.component";
 
 import { RiHeartLine, RiHeartFill } from "react-icons/ri";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
+
 import { useDispatch, useSelector } from "react-redux";
 
 const theme = sessionStorage.getItem("theme");
@@ -76,7 +77,6 @@ function ProductShowcase() {
     await api
       .addProductToCart({ productId: params.id })
       .then((data) => {
-        console.log(data);
         setIsProductInCart((e) => !e);
       })
       .catch((err) =>
@@ -91,7 +91,6 @@ function ProductShowcase() {
     await api
       .handleLikedList({ productId: params.id })
       .then((data) => {
-        console.log(data);
         setIsProductLiked((e) => !e);
       })
       .catch((err) =>

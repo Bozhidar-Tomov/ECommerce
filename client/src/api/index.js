@@ -16,10 +16,6 @@ export const fetchProductData = (productId = "") => API.get(`products/${productI
 export const signin = (formData) => API.post("/users/signin", formData);
 export const signup = (formData) => API.post("/users/signup", formData);
 
-export const addPromoCode = (formData) => API.post("/promo-codes/add", formData);
-export const validatePromoCode = (formData) => API.post("/promo-codes/validate", formData);
-export const deletePromoCode = (formData) => API.delete("/promo-codes/deletePromoCode", formData);
-
 export const verifyEmail = (token) => API.get(`/users/validate/${token}`);
 export const sendVerificationEmail = (userInfo) =>
   API.post("/users/sendVerificationEmail", userInfo);

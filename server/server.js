@@ -11,7 +11,6 @@ const CONNECTION_URL = process.env.CONNECTION_URL;
 
 app.use(cors());
 app.use((req, res, next) => {
-  console.log(req.originalUrl);
   if (req.originalUrl === "/payments/webhook/") {
     next();
   } else {
@@ -21,12 +20,10 @@ app.use((req, res, next) => {
 
 const productRoutes = require("./routes/products");
 const userRoutes = require("./routes/users");
-const promoCodeRoutes = require("./routes/promoCodes");
 const paymentRoute = require("./routes/paymentRoute");
 
 app.use("/products", productRoutes);
 app.use("/users", userRoutes);
-app.use("/promo-codes", promoCodeRoutes);
 app.use("/payments", paymentRoute);
 
 mongoose
