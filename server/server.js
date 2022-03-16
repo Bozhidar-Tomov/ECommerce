@@ -9,7 +9,11 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const CONNECTION_URL = process.env.CONNECTION_URL;
 
-app.use(cors());
+const corsOpts = {
+  origin: `http://localhost:${PORT}`,
+};
+
+app.use(cors(corsOpts));
 app.use((req, res, next) => {
   if (req.originalUrl === "/payments/webhook/") {
     next();
