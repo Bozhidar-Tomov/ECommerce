@@ -6,7 +6,6 @@ exports.sendConfirmationEmail = function (name, email, token) {
     // Create transporter object with gmail service
     const transporter = nodemailer.createTransport({
       service: "smtp.gmail.com",
-      port: 465,
       auth: {
         user: process.env.GOOGLE_USER,
         pass: process.env.GOOGLE_PASSWORD,
