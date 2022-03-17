@@ -5,18 +5,23 @@ exports.sendConfirmationEmail = function (name, email, token) {
   return new Promise((res, rej) => {
     // Create transporter object with gmail service
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp-mail.outlook.com", // hostname
+      secureConnection: false,
+      port: 587,
       auth: {
-        user: process.env.GOOGLE_USER,
-        pass: process.env.GOOGLE_PASSWORD,
+        user: process.env.USER,
+        pass: process.env.PASSWORD,
+      },
+      tls: {
+        ciphers: "SSLv3",
       },
     });
 
     const message = {
-      from: process.env.GOOGLE_USER,
+      from: process.env.USER,
       // to: email // in production uncomment this
       // While we are testing we want to send a message to our selfs
-      to: process.env.GOOGLE_USER,
+      to: email,
       subject: "Store - Activate Account",
       html: `
         <h3> Hello ${name} </h3>
@@ -31,6 +36,7 @@ exports.sendConfirmationEmail = function (name, email, token) {
       if (err) {
         rej(err);
       } else {
+        console.log("sent!");
         res(info);
       }
     });
