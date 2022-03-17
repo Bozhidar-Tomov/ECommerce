@@ -21,7 +21,7 @@ exports.sendConfirmationEmail = function (name, email, token) {
       html: `
         <h3> Hello ${name} </h3>
         <p>Thank you for registering into our Online Store. Much Appreciated! Just one last step is laying ahead of you...</p>
-        <p>To activate your account please follow this link: <a target="_" href="http://localhost:3000/auth/activationStatus/${token}"> Click here </a></p>
+        <p>To activate your account please follow this link: <a target="_" href="https://tech-checkie-noit.herokuapp.com/auth/activationStatus/${token}"> Click here </a></p>
         <p>Cheers</p>
         <p>Online Store Team</p>
       `,

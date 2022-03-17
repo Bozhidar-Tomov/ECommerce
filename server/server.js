@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5000;
 const CONNECTION_URL = process.env.CONNECTION_URL;
 
 const corsOpts = {
-  origin: `http://localhost:${PORT}`,
+  origin: `https://tech-checkie-noit.herokuapp.com/`,
 };
 
 app.use(cors(corsOpts));
