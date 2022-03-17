@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: `http://localhost:${process.env.PORT || process.env.REACT_APP_PORT || 3210}`,
+  baseURL: `https://tech-checkie-noit.herokuapp.com`,
 });
 
 API.interceptors.request.use((req) => {
