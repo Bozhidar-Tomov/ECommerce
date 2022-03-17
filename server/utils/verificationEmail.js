@@ -5,7 +5,12 @@ exports.sendConfirmationEmail = function (name, email, token) {
   return new Promise((res, rej) => {
     // Create transporter object with gmail service
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: "smtp-mail.outlook.com",
+      secureConnection: false,
+      port: 587,
+      tls: {
+        ciphers: "SSLv3",
+      },
       auth: {
         user: process.env.GOOGLE_USER,
         pass: process.env.GOOGLE_PASSWORD,
@@ -16,14 +21,14 @@ exports.sendConfirmationEmail = function (name, email, token) {
       from: process.env.GOOGLE_USER,
       // to: email // in production uncomment this
       // While we are testing we want to send a message to our selfs
-      to: process.env.GOOGLE_USER,
+      to: email,
       subject: "Store - Activate Account",
       html: `
         <h3> Hello ${name} </h3>
         <p>Thank you for registering into our Online Store. Much Appreciated! Just one last step is laying ahead of you...</p>
         <p>To activate your account please follow this link: <a target="_" href="https://tech-checkie-noit.herokuapp.com/auth/activationStatus/${token}"> Click here </a></p>
         <p>Cheers</p>
-        <p>Online Store Team</p>
+        <p>Tech Checkie Team</p>
       `,
     };
 

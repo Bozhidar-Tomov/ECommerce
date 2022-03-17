@@ -35,9 +35,7 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() =>
-    app.listen(PORT, () => console.log(`Server Running on Port: http://localhost:${PORT}`))
-  )
+  .then(() => app.listen(PORT, () => console.log(`Server Is Set Up Successfully And Is Running `)))
   .catch((error) => console.log(`Error: ${error}. \nDid not connect`));
 
 if (process.env.NODE_ENV === "production") {
