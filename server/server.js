@@ -15,7 +15,7 @@ const corsOpts = {
 
 app.use(cors(corsOpts));
 app.use((req, res, next) => {
-  if (req.originalUrl === "/payments/webhook/") {
+  if (req.originalUrl === "/api/payments/webhook/") {
     next();
   } else {
     express.json()(req, res, next);
@@ -26,9 +26,9 @@ const productRoutes = require("./routes/products");
 const userRoutes = require("./routes/users");
 const paymentRoute = require("./routes/paymentRoute");
 
-app.use("/products", productRoutes);
-app.use("/users", userRoutes);
-app.use("/payments", paymentRoute);
+app.use("/api/products", productRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/payments", paymentRoute);
 
 mongoose
   .connect(CONNECTION_URL, {
