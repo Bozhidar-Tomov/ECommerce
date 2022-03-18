@@ -1,4 +1,5 @@
 {
+  "homepage": "https://tech-checkie-noit.herokuapp.com/app/",
   "name": "client",
   "version": "0.1.0",
   "private": true,
