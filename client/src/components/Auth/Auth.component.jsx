@@ -203,13 +203,13 @@ function Auth() {
                 }
               }}
               initialValues={{
-                firstName: "wee",
-                lastName: "wee",
-                email: "development.acc5@gmail.com",
+                firstName: "",
+                lastName: "",
+                email: "",
                 country: userGeoId.countryName,
                 countryCode: userGeoId.countryCode,
-                password: "dg7ugyjyj6h",
-                confirmPassword: "dg7ugyjyj6h",
+                password: "",
+                confirmPassword: "",
                 rememberMe: false,
                 internetProvider: userGeoId.internetProvider,
                 currency: userGeoId.currency,
