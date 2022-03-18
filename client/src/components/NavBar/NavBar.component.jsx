@@ -60,16 +60,16 @@ function NavBar(props) {
       <Navbar.Toggle aria-controls='navbarScroll' />
       <Navbar.Collapse id='navbarScroll'>
         <Nav className='me-auto  my-lg-0' navbarScroll>
-          <Nav.Link as={Link} to='/app/store'>
+          <Nav.Link as={Link} to='/store'>
             Store
           </Nav.Link>
           {decodedToken && (
-            <Nav.Link as={Link} to='/app/dashboard'>
+            <Nav.Link as={Link} to='/dashboard'>
               Dashboard
             </Nav.Link>
           )}
         </Nav>
-        {location.pathname !== "/app/auth" &&
+        {location.pathname !== "/auth" &&
           (decodedToken ? (
             <Nav>
               <Container>
@@ -85,14 +85,14 @@ function NavBar(props) {
                     Not verified
                   </Badge>
                 )}
-                <Button as={Link} to='/app' variant='outline-secondary ms-4' onClick={signOut}>
+                <Button as={Link} to='/' variant='outline-secondary ms-4' onClick={signOut}>
                   Sign Out
                 </Button>
               </Container>
             </Nav>
           ) : (
             <Nav>
-              <Button as={Link} to='/app/auth' variant='outline-secondary'>
+              <Button as={Link} to='/auth' variant='outline-secondary'>
                 Sign In
               </Button>
             </Nav>
