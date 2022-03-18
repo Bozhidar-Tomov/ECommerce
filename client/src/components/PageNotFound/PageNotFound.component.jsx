@@ -38,7 +38,7 @@ function PageNotFound() {
           </Card.Text>
 
           <Col className='justify-content-center'>
-            <Button size='lg' variant='primary' as={Link} to={"/app"}>
+            <Button size='lg' variant='primary' as={Link} to={"/"}>
               Go back
             </Button>
           </Col>
