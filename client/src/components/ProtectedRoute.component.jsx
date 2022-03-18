@@ -16,13 +16,13 @@ const isAuthenticated = () => {
   if (user?.token) {
     const decodedToken = decode(user.token);
     if (decodedToken.exp * 1000 > new Date().getTime()) {
-      if (!decodedToken.isAccountValidated && window.location.pathname !== "/dashboard")
+      if (!decodedToken.isAccountValidated && window.location.pathname !== "/app/dashboard")
         return ["Your account is not verified! Verify your account in order to proceed.", "/app"];
       return true;
     }
-    return ["Your session has expired. Sign in again.", "/auth"];
+    return ["Your session has expired. Sign in again.", "/app/auth"];
   }
-  return ["You have to sign in in order to proceed.", "/auth"];
+  return ["You have to sign in in order to proceed.", "/app/auth"];
 };
 
 function ProtectedRoute({ children }) {
