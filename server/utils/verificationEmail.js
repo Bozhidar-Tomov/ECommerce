@@ -3,11 +3,15 @@ const nodemailer = require("nodemailer");
 exports.sendConfirmationEmail = function (name, email, token) {
   return new Promise((res, rej) => {
     const transporter = nodemailer.createTransport({
-      host: "smtp-relay.sendinblue.com",
+      host: "smtp-mail.outlook.com",
+      secureConnection: false,
       port: 587,
       auth: {
         user: process.env.USER,
         pass: process.env.PASSWORD,
+      },
+      tls: {
+        ciphers: "SSLv3",
       },
     });
 
