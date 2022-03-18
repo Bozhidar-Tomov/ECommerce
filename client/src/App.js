@@ -47,26 +47,22 @@ function App() {
           <LazyNavbar themeToggler={themeToggler} />
           <LazyBlob />
           <Routes>
-            <Route exact path='/app' element={<LazyLandingPage />} />
-            <Route exact path='/app/auth' element={<LazyAuth />} />
-            <Route exact path='/app/auth/verify' element={<LazyVerify />} />
-            <Route
-              exact
-              path='/app/auth/activationStatus/:token'
-              element={<LazyActivationStatus />}
-            />
-            <Route exact path='/app/store' element={<LazyStore />} />
-            <Route path='/app/product/:id' element={<LazyProductShowcase />} />
+            <Route exact path='/' element={<LazyLandingPage />} />
+            <Route exact path='/auth' element={<LazyAuth />} />
+            <Route exact path='/auth/verify' element={<LazyVerify />} />
+            <Route exact path='/auth/activationStatus/:token' element={<LazyActivationStatus />} />
+            <Route exact path='/store' element={<LazyStore />} />
+            <Route path='/product/:id' element={<LazyProductShowcase />} />
 
             <Route
-              path='/app/payment/success'
+              path='payment/success'
               element={
                 <LazyProtectedRoute>
                   <LazyPaymentSuccess />
                 </LazyProtectedRoute>
               }></Route>
             <Route
-              path='/app/payment/cancel'
+              path='payment/cancel'
               element={
                 <LazyProtectedRoute>
                   <LazyPaymentCancel />
@@ -74,7 +70,7 @@ function App() {
               }></Route>
             <Route
               exact
-              path='/app/dashboard'
+              path='/dashboard'
               element={
                 <LazyProtectedRoute>
                   <LazyDashboard />
