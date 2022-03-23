@@ -45,8 +45,8 @@ const createCheckoutSession = async (req, res) => {
       },
       mode: "payment",
       line_items: items,
-      success_url: "https://tech-checkie-noit.herokuapp.com/success",
-      cancel_url: "https://tech-checkie-noit.herokuapp.com/cancel",
+      success_url: "https://tech-checkie-noit.herokuapp.com/payment/success",
+      cancel_url: "https://tech-checkie-noit.herokuapp.com/payment/cancel",
     })
     .then(async (e) => {
       res.status(200).send(e.url);

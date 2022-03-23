@@ -55,14 +55,14 @@ function App() {
             <Route path='/product/:id' element={<LazyProductShowcase />} />
 
             <Route
-              path='payment/success'
+              path='/payment/success'
               element={
                 <LazyProtectedRoute>
                   <LazyPaymentSuccess />
                 </LazyProtectedRoute>
               }></Route>
             <Route
-              path='payment/cancel'
+              path='/payment/cancel'
               element={
                 <LazyProtectedRoute>
                   <LazyPaymentCancel />

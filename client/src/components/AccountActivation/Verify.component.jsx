@@ -25,8 +25,6 @@ function Verify() {
   );
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.auth.userInfo);
-  const theme = sessionStorage.getItem("theme");
-  const oppositeTheme = theme === "dark" ? "light" : "dark";
 
   useEffect(() => {
     dispatch(sendVerificationEmail(userInfo));
@@ -45,11 +43,7 @@ function Verify() {
   return (
     <Container fluid='sm' className='my-5 px-4'>
       <Row className='justify-content-center text-center my-4'>
-        <Card
-          bg={theme}
-          text={oppositeTheme}
-          className='shadow-lg border border-primary border-2 p-4'
-          style={{ width: "50rem" }}>
+        <Card className='shadow-lg border border-primary border-2 p-4' style={{ width: "50rem" }}>
           <Row className='justify-content-center text-center'>
             <Image variant='top' src={emailCheck} style={{ width: "190px", height: "190px" }} />
           </Row>

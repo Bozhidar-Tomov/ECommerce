@@ -31,13 +31,12 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 
 const theme = sessionStorage.getItem("theme");
-const oppositeTheme = theme === "dark" ? "light" : "dark";
 
 function getAdditionalInfo(info) {
   if (info) {
     return Object.entries(info).map(([key_, value_]) => {
       return (
-        <Card className='shadow-sm info-card' key={key_} bg={theme} text={oppositeTheme}>
+        <Card className='shadow-sm info-card' key={key_}>
           <Card.Body>
             <Row className='p-2'>
               <Col>

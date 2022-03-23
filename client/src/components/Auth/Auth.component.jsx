@@ -179,10 +179,7 @@ function Auth() {
       />
 
       <div className='my-5 mx-md-5 p-2 d-flex justify-content-md-start justify-content-center align-items-center'>
-        <Card
-          className='n shadow-lg border border-primary border-2'
-          bg={theme}
-          text={oppositeTheme}>
+        <Card className='n shadow-lg border border-primary border-2'>
           <Card.Title className='text-primary text-center my-4'>
             <h3>{isSignUp ? "Sign Up" : "Sign In"}</h3>
           </Card.Title>

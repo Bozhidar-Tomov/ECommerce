@@ -16,8 +16,6 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 function ActivationStatus() {
   console.log("rendering");
   const [state, setState] = useState(null);
-  const theme = sessionStorage.getItem("theme");
-  const oppositeTheme = theme === "dark" ? "light" : "dark";
   const params = useParams();
 
   useEffect(() => {
@@ -40,8 +38,6 @@ function ActivationStatus() {
     <Container fluid='sm' className='my-5 px-4'>
       <Row className='justify-content-center text-center my-4'>
         <Card
-          bg={theme}
-          text={oppositeTheme}
           className={`shadow-lg border border-${
             state.status === 200 ? "success" : state.status === 409 ? "secondary" : "danger"
           } border-2 p-4`}

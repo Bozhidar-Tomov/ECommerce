@@ -7,9 +7,6 @@ import Card from "react-bootstrap/Card";
 
 import { Link } from "react-router-dom";
 
-const theme = sessionStorage.getItem("theme");
-const oppositeTheme = theme === "dark" ? "light" : "dark";
-
 function getInfo(info) {
   if (!info) {
     return null;
@@ -30,7 +27,7 @@ function getInfo(info) {
 function Product(props) {
   return (
     <Col xl={3} lg={4} md={6} sm={12} key={props._id}>
-      <Card className='card_ shadow-sm p-3' bg={theme} text={oppositeTheme}>
+      <Card className='card_ shadow-sm p-3'>
         <img src={laptop} className='card-img-top' alt='' />
         <Card.Body>
           <Card.Title>
